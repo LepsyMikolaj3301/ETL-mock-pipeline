@@ -1,0 +1,35 @@
+version: "3.9"
+networks:
+  dem:
+services:
+  postgres:
+    image: postgres:latest
+    container_name: shoe_store_cont
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 789456
+      POSTGRES_DB: shoe_storage
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./docker/postgres/tablespace:/mnt/tablespace       # Mount tablespace dir
+      - pgdata:/var/lib/postgresql/data                 # Main DB data
+      - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql  # Optional SQL
+    networks:
+      - dem
+  gen_data:
+    build:
+      context: ./
+      dockerfile: /docker/gen_s_data/Dockerfile
+    container_name: gen_data_cont
+    networks:
+      - dem
+    depends_on:
+      - postgres
+    environment:
+      DB_HOST: postgres
+      DB_NAME: mydb
+      DB_USER: postgres
+      DB_PASS: 789456
+volumes:
+  pgdata:
