@@ -35,16 +35,36 @@ TODO: Tworzenie faktur/paragonów (info od Bazy)
 TODO: zrobienie Magazynu (info do bazy)
 TODO: Zrobienie dziennego raportu 
 """
+import random
 import psycopg2
 from faker import Faker
+
+import faker_commerce
 import factory
 import logging, time
 import os
 
 
+
+# Creating a shoe based provider
+
+
+
+
+
+
+fake = Faker()
+fake.add_provider(faker_commerce.Provider)
+# fake_providers = faker.providers.company.Provider()
+
+
+
+
+
+
 class BrandT:
-    def __init__(self, shoe_id, brand, model_name, category, price):
-        self.shoe_id = shoe_id
+    def __init__(self, product_id, brand, model_name, category, price):
+        self.product_id = product_id
         self.brand = brand
         self.model_name = model_name
         self.category = category
@@ -53,8 +73,10 @@ class BrandT:
 class BrandT_Factory(factory.base.Factory):
     class Meta:
         model = BrandT
-        
-    shoe_id = factory.Laz
+    
+    product_id = factory.declarations.LazyAttribute(lambda _: fake.uuid4())
+    brand = factory.declarations.LazyAttribute(lambda _: fake.company())
+    model_name = factory.declarations.LazyAttribute(lambda _: fake.word())
     
 
 class Receipt:
