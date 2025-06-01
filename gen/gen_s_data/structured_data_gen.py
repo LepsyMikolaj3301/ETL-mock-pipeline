@@ -37,11 +37,36 @@ TODO: Zrobienie dziennego raportu
 """
 import psycopg2
 from faker import Faker
+import factory
 import logging, time
 import os
 
 
-class DbWrap:
+class BrandT:
+    def __init__(self, shoe_id, brand, model_name, category, price):
+        self.shoe_id = shoe_id
+        self.brand = brand
+        self.model_name = model_name
+        self.category = category
+        self.price = price
+
+class BrandT_Factory(factory.base.Factory):
+    class Meta:
+        model = BrandT
+        
+    shoe_id = factory.Laz
+    
+
+class Receipt:
+    def __init__(self, receipt_id, date, total, payment_method):
+        self.receipt_id = receipt_id
+        self.date = date
+        self.total = total
+        self.payment_method = payment_method
+
+
+
+class DatabaseInsertions:
     def __init__(self) -> None:
         # Connect to the database
         while True:
@@ -69,8 +94,20 @@ class DbWrap:
             except Exception as e:
                 print("Execute error", e)
                 self.conn.rollback()
+    
+    def init_insert_brands(self):
+        # Insert brands to db
+        
+        
+        with self.conn.cursor() as cur:
             
- 
+            
+            
+        pass
+
+    def init_insert_storage(self):
+        pass
+    
             
 
 
@@ -80,20 +117,20 @@ class DbWrap:
 
 def insert_artificial_data_to_db():
     db_wrp = DbWrap()
-    db_wrp.exec_print_stmt("SELECT * FROM shoes_table;")
+    db_wrp.exec_print_stmt("SELECT * FROM brand_table;")
     
 # TODO: Generowanie przychodzących oraz odchodzących produktów
-class ShoeWarehouse:
-    def __init__(self) -> None:
-        pass
+# class ShoeWarehouse:
+#     def __init__(self) -> None:
+#         pass
     
 
 
    
 # TODO: Generowanie paragonów i zwrotów
-class ShoeShop:
-    def __init__(self) -> None:
-        pass
+# class ShoeShop:
+#     def __init__(self) -> None:
+#         pass
 
 
 if __name__ == '__main__':
