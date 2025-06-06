@@ -3,22 +3,39 @@ networks:
   db_net:
 
 services:
-  postgres:
+  shoe_storage_db:
     restart: no
     image: postgres:latest
-    container_name: shoe_db_cont
+    container_name: shoe_storage_db_cont
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: 789456
+      POSTGRES_PASSWORD: postgres
       POSTGRES_DB: shoe_storage
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
-      - ./docker/postgres/tablespace:/mnt/tablespace       # Mount tablespace dir
+      # - ./docker/postgres/tablespace:/mnt/tablespace       # Mount tablespace dir
       - pgdata:/var/lib/postgresql/data                 # Main DB data
-      - ./docker/postgres/init/init.sql:/docker-entrypoint-initdb.d/init.sql  # Optional SQL
+      - ./docker/postgres_dbs/shoe_storage_db/init/init.sql:/docker-entrypoint-initdb.d/init.sql  # Optional SQL
     networks:
       - db_net
+  client_db:
+    restart: no
+    image: postgres:latest
+    container_name: client_db_cont
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: clients
+    ports:
+      - "5434:5432"
+    volumes:
+      # - ./docker/postgres/tablespace:/mnt/tablespace       # Mount tablespace dir
+      - pgdata:/var/lib/postgresql/data                 # Main DB data
+      - ./docker/postgres_dbs/client_db/init/init.sql:/docker-entrypoint-initdb.d/init.sql  # Optional SQL
+    networks:
+      - db_net
+  
   gen_data:
     build:
       context: ./
@@ -27,11 +44,20 @@ services:
     networks:
       - db_net
     depends_on:
-      - postgres
+      - shoe_storage_db
+      - client_db
     environment:
-      DB_HOST: postgres
-      DB_NAME: mydb
-      DB_USER: postgres
-      DB_PASS: 789456
+      # SHOE STORAGE CONNECTION VARIABLES
+      SHOE_DB_NAME: shoe_storage
+      SHOE_DB_USER: store
+      SHOE_DB_PASS: store
+      SHOE_DB_HOST: shoe_storage_db
+      SHOE_DB_PORT: 5433
+      # CLIENT CONNECTION VARIABLES
+      CLIENT_DB_NAME: clients
+      CLIENT_DB_USER: postgres
+      CLIENT_DB_PASS: postgres
+      CLIENT_DB_HOST: client_db
+      CLIENT_DB_PORT: 5434
 volumes:
   pgdata:

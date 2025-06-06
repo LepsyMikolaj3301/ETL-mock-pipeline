@@ -36,14 +36,15 @@ TODO: zrobienie Magazynu (info do bazy)
 TODO: Zrobienie dziennego raportu 
 """
 import random
-import psycopg2
+import pandas as pd
 from faker import Faker
 from faker.providers import barcode
 from shoe_provider import ShoeProvider
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.sql import func
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, String, Numeric, Integer
+from sqlalchemy import Column, String, Numeric, Integer, Date
 from dataclasses import dataclass
 import factory
 from factory.alchemy import SQLAlchemyModelFactory
@@ -156,6 +157,22 @@ class Storage(Base):
     shoe_id = Column(String(36))
     quantity = Column(Integer())
     
+class Client(Base):
+    __tablename__ = 'clients_table'
+    client_id = Column(String(36), primary_key=True)
+    client_first_name = Column(String(120))
+    client_last_name = Column(String(120))
+    client_email = Column(String(100), nullable=False, unique=True)
+    client_date_of_birth = Column(Date)  # Use Date if you want: from sqlalchemy import Date
+    client_phone_number = Column(String(30))
+    billing_address = Column(String)
+    shipping_address = Column(String)
+    city = Column(String(100))
+    postal_code = Column(String(20))
+    country = Column(String(50))
+    client_acc_createAt = Column(Date, onupdate=func.now())  # Use Date and func.now() for real DB default
+
+    
 
 class ShoeTableFactory(SQLAlchemyModelFactory):
     class Meta: # type: ignore
@@ -167,6 +184,7 @@ class ShoeTableFactory(SQLAlchemyModelFactory):
     model_name = factory.declarations.LazyAttribute(lambda _: fake.shoe_name())
     category = factory.declarations.LazyAttribute(lambda _: fake.shoe_category())
     price = factory.declarations.LazyAttribute(lambda _: fake.shoe_price())
+
 
 
 class Receipt:
@@ -186,14 +204,19 @@ class ReceiptFactory(factory.base.Factory):
     
     
 
-
-class InitDB:
-    def __init__(self) -> None:
+class InitShoeDB:
+    def __init__(self, username, password, host_port, db_name) -> None:
         #TODO #1 Change from HARDCODED connection to ENV variables
-        self.engine = create_engine('postgresql://{}:{}@{}/{}'.format('postgres',
-                                                                      789456,
-                                                                      'postgres:5432',
-                                                                      'shoe_storage'))
+        engine_connection = 'postgresql://{}:{}@{}/{}'.format(username,
+                                                              password,
+                                                              host_port,
+                                                              db_name )
+        try:
+            self.engine = create_engine(engine_connection)
+            logger.info(f'CONNECTED SUCCESSFULLY TO: {engine_connection}')
+        except Exception as e:
+            logger.error(f'CONNECTION UN_SUCCESSFUL - {e}')
+            
         self.Session = sessionmaker(bind=self.engine)
         Base.metadata.create_all(self.engine)  # Ensure tables exist
 
@@ -205,9 +228,7 @@ class InitDB:
             logger.info(f"Inserted {len(shoes_inserted)} shoes into shoe_table.")
             session.commit()
             
-            
-            
-            
+    # Initializint the storage database            
     def init_storage_table(self):
         with self.Session() as session:
             shoe_ids = session.query(Shoe.shoe_id)
@@ -228,24 +249,45 @@ class InitDB:
 class ShoeShopSimulation:
     """
     SHOE SHOP SIMULATION
-    IT CREATES VARIOUS OBJECTS FOR DATA GENERATION
-        DAILY 
+    IT CREATES VARIOUS OBJECTS FOR DATA GENERATION IN INTERVALS (CRON)
+    """    
+    
+    def __init__(self, shoe_db_conn_info, client_db_conn_info) -> None:
+        host_port_shoe_db = ':'.join([shoe_db_conn_info['host'], shoe_db_conn_info['port']])
+        host_port_client_db = ':'.join([client_db_conn_info['host'], client_db_conn_info['port']])
         
-    """
-    def __init__(self) -> None:
-        self.engine = create_engine('postgresql://{}:{}@{}/{}'.format('postgres',
-                                                                      789456,
-                                                                      'postgres:5432',
-                                                                      'shoe_storage'))
-        self.Session = sessionmaker(bind=self.engine)
+        engine_connection_shoe_db = 'postgresql://{}:{}@{}/{}'.format(shoe_db_conn_info['user'],
+                                                              shoe_db_conn_info['pass'],
+                                                              host_port_shoe_db,
+                                                              shoe_db_conn_info['name'])
+        self.engine_shoe_db = create_engine(engine_connection_shoe_db)
+        self.engine_client_db = create_engine()
+        
+        self.Session = sessionmaker(bind=self.engine_shoe_db)
+        
+        
 
 
     def _create_receipt(self):
+        
         # Create a receipt 
+
+        pass
     
+    def _create_import_order(self):
+        pass
+    
+    def _create_import_(self):
+        pass
     
 
-
+def connect_test(username, password, host_port, db_name):
+    engine_connection = 'postgresql://{}:{}@{}/{}'.format(username,
+                                                              password,
+                                                              host_port,
+                                                              db_name )
+    engine = create_engine(engine_connection)
+    print(f'CONNECTED! TO {engine}')
 
 
 # TODO: Generowanie przychodzących oraz odchodzących produktów
@@ -262,8 +304,33 @@ class ShoeShopSimulation:
 #         pass
 
 if __name__ == '__main__':
+
+    shoe_db_conn = {
+    "name" : os.environ.get('SHOE_DB_NAME'),
+    "user" : os.environ.get('SHOE_DB_USER'),
+    "pass" : os.environ.get('SHOE_DB_PASS'),
+    "host" : os.environ['SHOE_DB_HOST'],
+    "port" : os.environ['SHOE_DB_PORT']
+    }
+    
+    
+    client_db_name = os.environ.get('CLIENT_DB_NAME')
+    client_db_user = os.environ.get('CLIENT_DB_USER')
+    client_db_pass = os.environ.get('CLIENT_DB_PASS')
+    client_db_host_port = ':'.join([os.environ['CLIENT_DB_HOST'], os.environ['CLIENT_DB_PORT']])
+    
+    
+    
+    # 'postgres'
+    # 789456
+    # 'postgres:5432'
+    # 'shoe_storage'
+        
+        
+    
     # insert_artificial_data_to_db()
-    test_factory()
+    # test_factory()
+    pass
     
 
 
