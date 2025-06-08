@@ -107,6 +107,11 @@ class ShoeProvider(BaseProvider):
     
     def shoe_price(self):
         return generate_price_normal_dist()
+
+
+def client_gender() -> str:
+    genders = ['M', 'F', 'X']
+    return random.choices(genders, [0.3, 0.6, 0.1])[0]
         
     
         

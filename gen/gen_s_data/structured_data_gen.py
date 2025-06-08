@@ -30,25 +30,16 @@ SKLEP INTERNETOWY
     ...
 ???
 
-TODO: ZROBIENIE BAZY DANYCH Z PRODUKTAMI
 TODO: Tworzenie faktur/paragonów (info od Bazy)
-TODO: zrobienie Magazynu (info do bazy)
 TODO: Zrobienie dziennego raportu 
 """
 import random
 import pandas as pd
-from faker import Faker
-from faker.providers import barcode
-from shoe_provider import ShoeProvider
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy.sql import func
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, String, Numeric, Integer, Date
-from dataclasses import dataclass
-import factory
-from factory.alchemy import SQLAlchemyModelFactory
-import logging, time
+import logging, datetime
+from factories import Shoe, Client, init_storage_vals
+from factories import ShoeTableFactory, ClientTableFactory
 import os
 
 # CREATING LOGGER
@@ -59,191 +50,93 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# BASIC OBJECTS
-fake = Faker()
-fake.add_provider(ShoeProvider)
-fake.add_provider(barcode.Provider)
-Base = declarative_base()
-# fake_providers = faker.providers.company.Provider()
+   
+def init_shoe_DB(shoe_db_conn_info: dict[str, str], instances_count: int):
+    """This function inserts SYNTHETIC data into the Shoe Table
 
-# class DatabaseInsertions:
-#     def __init__(self) -> None:
-#         # Connect to the database
-#         while True:
-#             try:
-#                 self.conn = psycopg2.connect(
-#                 dbname="shoe_storage",
-#                 user="postgres",
-#                 password=789456,
-#                 host="postgres",
-#                 port=5432
-#                 )
-#                 if self.conn:
-#                     print('CONNECTION SUCCESSFUL!')
-#                     break
-#             except Exception as e:
-#                 print('CONNECTION UNSUCCESFUL', e)
+    Args:
+        shoe_db_conn_info (dict[str]): info to connect to the ShoeDB
+        instances_count (int): the count of instances to insert
+
+    """
     
-#     def exec_print_stmt(self, stmt: str):
-#         with self.conn.cursor() as cur:
-#             try:
-#                 cur.execute(stmt)
-#                 rows = cur.fetchall()
-#                 for row in rows:
-#                     print(" | ".join(str(val) for val in row))
-#             except Exception as e:
-#                 print("Execute error", e)
-#                 self.conn.rollback()
     
-#     def init_brand_table(self, instances_count: int):
-#         # Initialize Factory object
-#         shoe_fac = BrandTableFactory()
+    host_port_shoe_db = ':'.join([shoe_db_conn_info['host'], shoe_db_conn_info['port']])
+
+    engine_connection = 'postgresql://{}:{}@{}/{}'.format(shoe_db_conn_info['user'],
+                                                              shoe_db_conn_info['pass'],
+                                                              host_port_shoe_db,
+                                                              shoe_db_conn_info['name'])
         
-#         values = [
-#             (shoe_fac.shoe_id,
-#              shoe_fac.brand, 
-#              shoe_fac.model_name, 
-#              shoe_fac.category, 
-#              shoe_fac.price)
-#             for _ in range(instances_count) 
-#         ]
-        
-#         stmt = """INSERT INTO brand_table (shoe_id, brand, model_name, category, price)
-#             VALUES (%s, %s, %s, %s, %s)
-#             ON CONFLICT (shoe_id) DO NOTHING;
-#             """
-        
-        
-        
-#         # Insert brands to db
-#         with self.conn.cursor() as cur:
+    try:
+        engine = create_engine(engine_connection)
+        logger.info(f'CONNECTED SUCCESSFULLY TO: {engine_connection}')
+    except Exception as e:
+        logger.error(f'CONNECTION UN_SUCCESSFUL - {e}')
+        return None
+    
+    
+    # Check if the Shoe table exists in the database
+    if not engine.dialect.has_table(engine.connect(), Shoe.__tablename__):
+        logger.info(f"Table '{Shoe.__tablename__}' does not exist!")
+        Shoe.__table__.create(engine)
+    else:
+        logger.info(f"Table '{Shoe.__tablename__}' already exists.")
+    
+    Session = sessionmaker(bind=engine)
+    
+    # INIT SHOE TABLE
+    # Insert Data to Table SHOE
+    with Session() as session:
+        # Inserting Data to table
+        shoes_inserted = ShoeTableFactory.create_batch(size=instances_count, session=session)
+        logger.info(f"Inserted {len(shoes_inserted)} shoes into shoe_table.")
+        session.commit()
+        shoe_ids = session.query(Shoe.shoe_id)
             
-            
-#             try:
-#                 cur.executemany(stmt, values)
-#                 rows = cur.fetchall()
-#                 for row in rows:
-#                     print(" | ".join(str(val) for val in row))
-#             except Exception as e:
-#                 print("Execute error", e)
-#                 self.conn.rollback()
-            
-            
-#         pass
-
-#     def init_insert_storage(self):
-#         pass
+    # STORAGE DATA MADE WITHOUT 
+    # Insert Data to Table STORAGE
+    values = init_storage_vals(shoe_ids)
     
-# #create_engine => username, password, hostname:port, database
-# def get_db_engine():
-#     return create_engine('postgresql://{}:{}@{}/{}'.format('postgres', 789456, 'postgres:5432', 'shoe_storage'))
-
-# def insert_artificial_data_to_db():
-#     db_wrp = DbWrap()
-#     db_wrp.exec_print_stmt("SELECT * FROM brand_table;")
-
-
-class Shoe(Base):
-    __tablename__ = 'shoe_table'
-    shoe_id = Column(String(36), primary_key=True)
-    brand = Column(String(100))
-    model_name = Column(String(100), nullable=False)
-    category = Column(String(50))
-    price = Column(Numeric(10, 2), nullable=False)
-
-class Storage(Base):
-    __tablename__ = 'storage_table'
-    product_id = Column(String(13), primary_key=True)
-    shoe_id = Column(String(36))
-    quantity = Column(Integer())
-    
-class Client(Base):
-    __tablename__ = 'clients_table'
-    client_id = Column(String(36), primary_key=True)
-    client_first_name = Column(String(120))
-    client_last_name = Column(String(120))
-    client_email = Column(String(100), nullable=False, unique=True)
-    client_date_of_birth = Column(Date)  # Use Date if you want: from sqlalchemy import Date
-    client_phone_number = Column(String(30))
-    billing_address = Column(String)
-    shipping_address = Column(String)
-    city = Column(String(100))
-    postal_code = Column(String(20))
-    country = Column(String(50))
-    client_acc_createAt = Column(Date, onupdate=func.now())  # Use Date and func.now() for real DB default
-
-    
-
-class ShoeTableFactory(SQLAlchemyModelFactory):
-    class Meta: # type: ignore
-        model = Shoe
-        sqlalchemy_session = None
-    
-    shoe_id = factory.declarations.LazyAttribute(lambda _: fake.uuid4())
-    brand = factory.declarations.LazyAttribute(lambda _: fake.shoe_brand())
-    model_name = factory.declarations.LazyAttribute(lambda _: fake.shoe_name())
-    category = factory.declarations.LazyAttribute(lambda _: fake.shoe_category())
-    price = factory.declarations.LazyAttribute(lambda _: fake.shoe_price())
-
-
-
-class Receipt:
-    def __init__(self, receipt_id, date, total, payment_method):
-        self.receipt_id = receipt_id
-        self.date = date
-        # TODO: do dodania info o paragonahc
-        self.items = None
-        self.total = total
-        self.payment_method = payment_method
-
-
-        
-class ReceiptFactory(factory.base.Factory):
-    class Meta: # type: ignore
-        model = Receipt
-    
-    
-
-class InitShoeDB:
-    def __init__(self, username, password, host_port, db_name) -> None:
-        #TODO #1 Change from HARDCODED connection to ENV variables
-        engine_connection = 'postgresql://{}:{}@{}/{}'.format(username,
-                                                              password,
-                                                              host_port,
-                                                              db_name )
-        try:
-            self.engine = create_engine(engine_connection)
-            logger.info(f'CONNECTED SUCCESSFULLY TO: {engine_connection}')
-        except Exception as e:
-            logger.error(f'CONNECTION UN_SUCCESSFUL - {e}')
-            
-        self.Session = sessionmaker(bind=self.engine)
-        Base.metadata.create_all(self.engine)  # Ensure tables exist
-
-    def init_shoe_table(self, instances_count: int):
-        # Insert Data to Table
-        with self.Session() as session:
-            # Inserting Data to table
-            shoes_inserted = ShoeTableFactory.create_batch(size=instances_count, session=session)
-            logger.info(f"Inserted {len(shoes_inserted)} shoes into shoe_table.")
+    try:
+        with Session() as session:
+            session.add_all(values)
             session.commit()
-            
-    # Initializint the storage database            
-    def init_storage_table(self):
-        with self.Session() as session:
-            shoe_ids = session.query(Shoe.shoe_id)
-            
-        values = [Storage(fake.ean13(),
-                          si,
-                          random.randint(0, 200))
-                  for si in shoe_ids]
-        try:
-            with self.Session() as session:
-                session.add_all(values)
-                session.commit()
-                logger.info(f"Inserted {len(values)} storage itmes into storage_table.")
-        except Exception as e:
-            logger.error(f"ORM insert error: {e}")
+            logger.info(f"Inserted {len(values)} storage iteMs into storage_table.")
+    except Exception as e:
+        logger.error(f"ORM insert error: {e}")
+    
+def init_client_db(client_db_conn_info: dict[str, str], instances_count: int):
+    host_port_client_db = ':'.join([client_db_conn_info['host'], client_db_conn_info['port']])
+
+    engine_connection = 'postgresql://{}:{}@{}/{}'.format(client_db_conn_info['user'],
+                                                                        client_db_conn_info['pass'],
+                                                                        host_port_client_db,
+                                                                        client_db_conn_info['name'])
+    
+    try:
+        engine = create_engine(engine_connection)
+        logger.info(f'CONNECTED SUCCESSFULLY TO: {engine_connection}')
+    except Exception as e:
+        logger.error(f'CONNECTION UN_SUCCESSFUL - {e}')
+        return None
+    
+    # Check if the Shoe table exists in the database
+    if not engine.dialect.has_table(engine.connect(), Client.__tablename__):
+        logger.info(f"Table '{Client.__tablename__}' does not exist!")
+        Client.__table__.create(engine)
+    else:
+        logger.info(f"Table '{Client.__tablename__}' already exists.")
+
+    Session = sessionmaker(bind=engine)
+    
+    # INIT CLIENT DB
+    with Session() as session:
+        # Inserting Data to table
+        client_inserted = ClientTableFactory.create_batch(size=instances_count, session=session)
+        logger.info(f"Inserted {len(client_inserted)} clients into {Client.__tablename__}.")
+        session.commit()
+    
 
 # SHOE SHOP SIMULATOR (WITH DATABASE CONNECTION ORM)
 class ShoeShopSimulation:
@@ -260,13 +153,41 @@ class ShoeShopSimulation:
                                                               shoe_db_conn_info['pass'],
                                                               host_port_shoe_db,
                                                               shoe_db_conn_info['name'])
+        
+        engine_connection_client_db = 'postgresql://{}:{}@{}/{}'.format(client_db_conn_info['user'],
+                                                                        client_db_conn_info['pass'],
+                                                                        host_port_client_db,
+                                                                        client_db_conn_info['name'])
+        
         self.engine_shoe_db = create_engine(engine_connection_shoe_db)
-        self.engine_client_db = create_engine()
+        self.engine_client_db = create_engine(engine_connection_client_db)
         
-        self.Session = sessionmaker(bind=self.engine_shoe_db)
+        self.SessionShoe = sessionmaker(bind=self.engine_shoe_db)
         
-        
+        # connect to db to download static databases
+        with self.engine_client_db.connect() as conn:
+            self.client_table = pd.read_sql_table('clients_table', conn)
+        with self.engine_shoe_db.connect() as conn:
+            self.shoe_table = pd.read_sql_table('shoe_table', conn) 
 
+        # Create amount of time to wait to restock STORAGE
+        
+    # @dataclass
+    # class Client:
+        
+    # TODO: GENERACJA PARAGONÓW I FAKTUR PRZEZ SYMULACJA
+    # ORAZ W AFEKCIE GENERACJA ZAMÓWIEŃ ORAZ PRZYSYŁEK
+    
+        
+    def simulate_buy(self):
+        
+        # Generate new client info
+        
+        # Pass it down to the create receipt 
+        
+        
+        
+        pass
 
     def _create_receipt(self):
         

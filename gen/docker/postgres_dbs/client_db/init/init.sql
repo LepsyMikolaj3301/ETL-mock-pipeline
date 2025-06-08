@@ -22,17 +22,18 @@ GRANT USAGE ON ALL SEQUENCES IN SCHEMA public TO etl;
 ALTER DEFAULT PRIVILEGES IN SCHEMA public
   GRANT USAGE ON SEQUENCES TO etl;
 
-CREATE TABLE IF NOT EXISTS client_table (
+CREATE TABLE IF NOT EXISTS clients_table (
     client_id VARCHAR(36) PRIMARY KEY,
-    client_first_name VARCHAR(120),
-    client_last_name VARCHAR(120),
+    client_first_name VARCHAR(120) NOT NULL,
+    client_last_name VARCHAR(120) NOT NULL,
+    client_gender TEXT,
     client_email VARCHAR(100) NOT NULL UNIQUE,
     client_date_of_birth DATE,
     client_phone_number VARCHAR(30),
-    billing_address TEXT,
-    shipping_address TEXT,
-    city VARCHAR(100),
-    postal_code VARCHAR(20),
-    country VARCHAR(50),
+    client_billing_address TEXT,
+    client_shipping_address TEXT,
+    client_city VARCHAR(100),
+    client_postal_code VARCHAR(20),
+    client_country VARCHAR(50),
     client_acc_createAt DATE DEFAULT NOW(),
 )
