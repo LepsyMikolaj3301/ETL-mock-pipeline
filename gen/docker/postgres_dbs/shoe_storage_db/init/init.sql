@@ -71,6 +71,7 @@ CREATE TABLE IF NOT EXISTS shoe_table (
     shoe_model_name VARCHAR(100) NOT NULL,
     shoe_category VARCHAR(50),
     shoe_price DECIMAL(10, 2) NOT NULL
+    currency VARCHAR(3)
 );
 
 CREATE TABLE IF NOT EXISTS storage_table (

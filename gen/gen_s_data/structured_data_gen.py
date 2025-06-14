@@ -50,6 +50,10 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+# GLOBALNE ZMIENNE - DO ZMIANY
+CURRENCY = 'EUR'
+
+
    
 def init_shoe_DB(shoe_db_conn_info: dict[str, str], instances_count: int):
     """This function inserts SYNTHETIC data into the Shoe Table
@@ -89,7 +93,7 @@ def init_shoe_DB(shoe_db_conn_info: dict[str, str], instances_count: int):
     # Insert Data to Table SHOE
     with Session() as session:
         # Inserting Data to table
-        shoes_inserted = ShoeTableFactory.create_batch(size=instances_count, session=session)
+        shoes_inserted = ShoeTableFactory.create_batch(size=instances_count, session=session, currency=CURRENCY)
         logger.info(f"Inserted {len(shoes_inserted)} shoes into shoe_table.")
         session.commit()
         shoe_ids = session.query(Shoe.shoe_id)
@@ -195,6 +199,10 @@ class ShoeShopSimulation:
 
         pass
     
+    def _create_invoice(self):
+        # Create an invoice from B2B or B2C
+        pass
+    
     def _create_import_order(self):
         pass
     
@@ -223,6 +231,9 @@ def connect_test(username, password, host_port, db_name):
 # class ShoeShop:
 #     def __init__(self) -> None:
 #         pass
+
+
+
 
 if __name__ == '__main__':
 
