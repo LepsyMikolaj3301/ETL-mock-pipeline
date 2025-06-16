@@ -8,10 +8,11 @@ from sqlalchemy.sql.expression import func
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, String, Numeric, Integer, Float, Date
 from dataclasses import dataclass, field
-from sqlalchemy.orm import Session
+from datetime import datetime
 import factory
 from factory.alchemy import SQLAlchemyModelFactory
 from typing import List
+from sqlalchemy import ForeignKey
 
 
 
@@ -35,8 +36,9 @@ class Shoe(Base):
 class Storage(Base):
     __tablename__ = 'storage_table'
     product_id = Column(String(13), primary_key=True)
-    shoe_id = Column(String(36))
-    shoe_size = Column(Float)
+    # Add ForeignKey constraint to reference Shoe.shoe_id
+    shoe_id = Column(String(36), ForeignKey('shoe_table.shoe_id'), nullable=False)
+    shoe_size = Column(Float())
     quantity = Column(Integer())
     
 class Client(Base):
@@ -162,9 +164,32 @@ class ItemQuant:
 
 @dataclass
 class Transaction:
-    client_info: Client | None
     items_list: list[ItemQuant]
+    transaction_type: str
+    transaction_money: str
 
+class TransactionFactory(factory.base.Factory):
+    class Meta:  # type: ignore
+        model = Transaction
+
+    class Params:
+        items_list: list[ItemQuant] | None = None
+
+    items_list = factory.declarations.LazyAttribute(lambda self: self.items_list if self.items_list is not None else [])
+    
+    transaction_type = factory.declarations.LazyFunction(lambda: random.choice(['CARD', 'CASH', 'ONLINE', 'BLIK', 'PAYPAL']))
+    
+    @factory.helpers.lazy_attribute
+    def transaction_money(self):
+        if self.transaction_type == 'CARD':
+            return fake.iban()
+        elif self.transaction_type == 'BLIK':
+            return fake.bothify(text='######')
+        elif self.transaction_type == 'PAYPAL':
+            return fake.phone_number()
+        else:
+            return None
+    
 
 @dataclass
 class Vendor:
@@ -202,26 +227,24 @@ class ItemReceiptFactory(factory.base.Factory):
         model = ItemReceipt
         
     class Params:
-        item_quant: ItemQuant
+        item_q: ItemQuant | None = None
     
+    # item_q = factory.declarations.LazyAttribute(lambda o: o.item_quant)    
     # item_name_brand_size = factory.declarations.LazyAttribute(lambda o: o.item_quant)
+    # self.item_q = self.item_quant #type: ignore
     
-    @factory.helpers.lazy_attribute
-    def item_name_brand_size(self):
-        return '|'.join([self.item_quant.item_name, #type: ignore
-                         self.item_quant.item_brand, #type: ignore
-                         self.item_quant.item_size #type: ignore
-                         ])
+    item_name_brand_size = factory.declarations.LazyAttribute(lambda self: '|'.join([self.item_q.item_name, #type: ignore
+                         self.item_q.item_brand, #type: ignore
+                         str(self.item_q.item_size) #type: ignore
+                         ]))
     
-    item_barcode = factory.declarations.LazyAttribute(lambda self: self.item_quant.item_barcode)
-    item_quantity = factory.declarations.LazyAttribute(lambda self: self.item_quant.quantity)
-    price_ind = factory.declarations.LazyAttribute(lambda self: self.item_quant.price_ind)
-    currency = factory.declarations.LazyAttribute(lambda self: self.item_quant.currency)
+    item_barcode = factory.declarations.LazyAttribute(lambda self: self.item_q.item_barcode)
+    item_quantity = factory.declarations.LazyAttribute(lambda self: self.item_q.quantity)
+    price_ind = factory.declarations.LazyAttribute(lambda self: self.item_q.price_ind)
+    currency = factory.declarations.LazyAttribute(lambda self: self.item_q.currency)
     item_vat = 0.23
     
-    @factory.helpers.lazy_attribute
-    def total_value(self):
-        return self.item_quant.quantity * self.item_quant.price_ind #type: ignore
+    total_value = factory.declarations.LazyAttribute(lambda self: self.item_q.quantity * self.item_q.price_ind) #type: ignore
     
         
 # RECEIPT PARENT FACTORY 
@@ -240,35 +263,40 @@ class ReceiptMeta:
     cash_reg_id: str
 
 class ReceiptFactory(factory.base.Factory):
+    """Receipt Factory
+
+    Args:
+        Params.vendor (Vendor): Vendor info
+        Params.transaction (Transaction): Transaction for Receipt
+    Returns:
+        ReceiptMeta: Receipt Dataclass
+    """
     class Meta: # type: ignore
         model = ReceiptMeta
 
     class Params:
-        vendor: Vendor
-        transaction: Transaction
+        vendor: Vendor | None = None
+        transaction: Transaction | None = None
     
-    receipt_date = factory.declarations.LazyAttribute(lambda _: fake.date_this_month(before_today=True).strftime("%Y-%m-%d"))
-    receipt_id = factory.declarations.Sequence(lambda n: f"GR-{factory.declarations.SelfAttribute('..receipt_date')}-{n}")
+    receipt_date = factory.declarations.LazyAttribute(lambda _: datetime.today().strftime('%Y-%m-%d;%H:%M:%S'))
+    receipt_id = factory.declarations.LazyAttributeSequence(lambda o, n: f"GR-{o.receipt_date}-{n}")
     receipt_barcode = factory.declarations.LazyAttribute(lambda _: fake.localized_ean8())
     vendor_vat = factory.declarations.LazyAttribute(lambda self: self.vendor.vendor_vat)
     vendor_name = factory.declarations.LazyAttribute(lambda self: self.vendor.vendor_name)
+    vendor_address = factory.declarations.LazyAttribute(lambda self: ' '.join([self.vendor.street, self.vendor.num_of_addr, self.vendor.city, self.vendor.country])) #type: ignore
     
     @factory.helpers.lazy_attribute
-    def vendor_address(self):
-        return ' '.join([self.vendor.street, self.vendor.num_of_addr, self.vendor.city, self.vendor.country]) #type: ignore
-    
-    items = factory.declarations.List([factory.declarations.SubFactory(ItemReceiptFactory, item_quant=item_quant) for item_quant in self.transaction.items_list]) #type: ignore
+    def items(self):
+        return [ItemReceiptFactory(item_q=itqt) for itqt in self.transaction.items_list] #type: ignore
 
     @factory.helpers.lazy_attribute
     def value_sum(self):
-        fact_items = factory.declarations.SelfAttribute('..items')
-        list_prices = [it.price_sum_by_item for it in fact_items] #type: ignore
-        return sum(list_prices)
+        list_prices = [it.total_value for it in self.items] #type: ignore
+        return round(sum(list_prices), 2)
     
     @factory.helpers.lazy_attribute
     def currency(self):
-        fact_items = factory.declarations.SelfAttribute('..items')
-        currencies = set([it.currency for it in fact_items]) #type: ignore
+        currencies = set([it.currency for it in self.items]) #type: ignore
         return currencies
     
     
@@ -295,13 +323,12 @@ class ItemInvoice:
     item_vat: str
     currency: str
 
-# TODO: Dokończenie fabryki Faktur
 class ItemInvoiceFactory(factory.base.Factory):
     class Meta: #type: ignore
-        model = ItemReceipt
+        model = ItemInvoice
         
     class Params:
-        item_quant: ItemQuant
+        item_quant: ItemQuant | None = None
     
     # item_name_brand_size = factory.declarations.LazyAttribute(lambda o: o.item_quant)
     
@@ -309,22 +336,18 @@ class ItemInvoiceFactory(factory.base.Factory):
     def item_name_brand_size(self):
         return ';'.join([self.item_quant.item_name, #type: ignore
                          self.item_quant.item_brand, #type: ignore
-                         self.item_quant.item_size #type: ignore
+                         str(self.item_quant.item_size) #type: ignore
                          ])
     
-    item_barcode = factory.declarations.LazyAttribute(lambda self: self.item_quant.item_barcode)
+    item_barcode = factory.declarations.LazyAttribute(lambda o: o.item_quant.item_barcode)
     item_meta_quantity = 'Szt.'
-    item_quantity = factory.declarations.LazyAttribute(lambda self: self.item_quant.quantity)
-    price_ind = factory.declarations.LazyAttribute(lambda self: self.item_quant.price_ind)
-    currency = factory.declarations.LazyAttribute(lambda self: self.item_quant.currency)
+    item_quantity = factory.declarations.LazyAttribute(lambda o: o.item_quant.quantity)
+    price_ind_net = factory.declarations.LazyAttribute(lambda o: round(o.item_quant.price_ind - (0.23 * o.item_quant.price_ind), 2))
+    value_net = factory.declarations.LazyAttribute(lambda o: round(o.price_ind_net * o.item_quant.quantity, 2))
+    price_ind_gross = factory.declarations.LazyAttribute(lambda o: o.item_quant.price_ind)
+    value_gross = factory.declarations.LazyAttribute(lambda o: round(o.item_quant.price_ind * o.item_quant.quantity, 2))
     item_vat = "23%"
-    
-    
-      
-    
-    @factory.helpers.lazy_attribute
-    def price_sum_by_item(self):
-        return self.item_quant.quantity * self.item_quant.price_ind #type: ignore
+    currency = factory.declarations.LazyAttribute(lambda o: o.item_quant.currency)
     
 
 
@@ -339,21 +362,32 @@ class InvoiceMeta:
     vendor_address: str
     buyer: str
     items: List[ItemInvoice]
-    price_sum: float
-    
+    value_sum_net: float
+    value_sum_gross: float
+    addit_notes: str
+    currency: str
     
         
 class InvoiceFactory(factory.base.Factory):
+    """The invoice factory
+    
+
+    Args:
+        Params.vendor(Vendor): Accepts the vendor Parameter
+        Params.transaction(Transaction): Accepts a transaction
+    Returns:
+        InvoiceMeta: Invoice dataclass
+    """
     class Meta: #type: ignore
         model = InvoiceMeta
         
         
     class Params:
-        vendor: Vendor
-        transaction: Transaction
+        vendor: Vendor | None = None
+        transaction: Transaction | None = None
     
-    invoice_date = factory.declarations.LazyAttribute(lambda _: fake.date_this_century(before_today=True).strftime("%Y-%m-%d"))
-    invoice_id = factory.declarations.Sequence(lambda n: f"INV-{factory.declarations.SelfAttribute('..receipt_date')}-{n}")
+    invoice_date = factory.declarations.LazyAttribute(lambda _: datetime.today().strftime('%Y-%m-%d;%H:%M:%S'))
+    invoice_id = factory.declarations.LazyAttributeSequence(lambda o, n: f"INV-{o.invoice_date}-{n}")
     vendor_vat = factory.declarations.LazyAttribute(lambda self: self.vendor.vendor_vat)
     vendor_eori = factory.declarations.LazyAttribute(lambda self: self.vendor.vendor_eori)
     vendor_regon = factory.declarations.LazyAttribute(lambda self: self.vendor.vendor_regon)
@@ -364,23 +398,31 @@ class InvoiceFactory(factory.base.Factory):
         return ' '.join([self.vendor.street, self.vendor.num_of_addr, self.vendor.city, self.vendor.country]) #type: ignore
 
     buyer = factory.declarations.SubFactory(BuyerFactory)
-    items = factory.declarations.List([factory.declarations.SubFactory(ItemReceiptFactory, item_quant=item_quant) for item_quant in self.transaction.items_list]) #type: ignore
+
+    @factory.helpers.lazy_attribute
+    def items(self):
+        return [ItemInvoiceFactory(item_quant=item_quant) for item_quant in self.transaction.items_list]  # type: ignore
     
     @factory.helpers.lazy_attribute
-    def price_sum(self):
-        fact_items = factory.declarations.SelfAttribute('..items')
-        list_prices = [it.price_sum_by_item for it in fact_items] #type: ignore
-        return sum(list_prices)
+    def value_sum_net(self):
+        list_prices = [it.value_net for it in self.items] #type: ignore
+        return round(sum(list_prices), 2)
+    
+    @factory.helpers.lazy_attribute
+    def value_sum_gross(self):
+        list_prices = [it.value_gross for it in self.items] #type: ignore
+        return round(sum(list_prices), 2)
     
     @factory.helpers.lazy_attribute
     def currency(self):
-        fact_items = factory.declarations.SelfAttribute('..items')
-        currencies = set([it.currency for it in fact_items]) #type: ignore
-        return currencies
+        return set([it.currency for it in self.items]) #type: ignore
+    
+    addit_notes = factory.declarations.LazyAttribute(lambda n: fake.text(300))
 
     
  
 
  
+
 
 

@@ -21,26 +21,20 @@ MAGAZYN
 - Zamówienia do dostawców | Dostawy z hurtowni | XML, EDI, JSON
 
 
-???
-SKLEP INTERNETOWY
-
-- Użytkownik ID:
-    - Zamówienia online | ID zamówienia, koszyk, adres dostawy, metoda płatności | JSON
-    - Historia transakcji | historia dla tego użytkownika | JSON, CSV
-    ...
-???
-
 TODO: Tworzenie faktur/paragonów (info od Bazy)
-TODO: Zrobienie dziennego raportu 
 """
 import random
 import pandas as pd
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 import logging, datetime
-from factories import Shoe, Client, init_storage_vals
+from factories import Shoe, Client, Storage, init_storage_vals
 from factories import ShoeTableFactory, ClientTableFactory
+# Receipt and Invoice generation
+from factories import ItemQuant, Transaction, TransactionFactory, Vendor
+from factories import ReceiptMeta, ReceiptFactory, InvoiceMeta, InvoiceFactory
 import os
+from sqlalchemy.sql.expression import func
 
 # CREATING LOGGER
 logging.basicConfig(
@@ -183,30 +177,77 @@ class ShoeShopSimulation:
     # ORAZ W AFEKCIE GENERACJA ZAMÓWIEŃ ORAZ PRZYSYŁEK
     
         
-    def simulate_buy(self):
-        
+    def simulate_buy(self, sim_metadata: dict):
         # Generate new client info
         
-        # Pass it down to the create receipt 
+        # Pass it down to the create receipt OR invoice
+        # PICK A FORMAT
         
+        # after creation, update 
         
         
         pass
 
+    
+    def __choose_products(self, num: int) -> list[ItemQuant]:
+        with self.SessionShoe() as session:
+
+            # DO ZMIANY
+            products_bought = []
+            # ADD LOGGER
+            
+            for product_result in session.query(Storage).filter(Storage.quantity > 10).order_by(func.random()).limit(num).all():
+                prod = product_result[0]
+                prod_shoe = self.shoe_table[self.shoe_table['shoe_id'] == prod.shoe_id]
+                if not prod_shoe:
+                    continue
+                products_bought.append(ItemQuant(prod_shoe.model_name,
+                                                 prod.shoe_size,
+                                                 prod_shoe.brand,
+                                                 prod.product_id,
+                                                 max(1, int(random.expovariate(1/3))),
+                                                 prod_shoe.price,
+                                                 prod_shoe.currency
+                                                ))
+                # ZMNIEJSZ LICZBE QUANTITY ABY ZASYMULOWAĆ SPRZEDARZ
+            return products_bought
+
+    def _create_transaction(self) -> Transaction:
+        
+        # Losuj ilość z rozkładu wykładniczego (np. średnia 2, zaokrąglona do min. 1)
+        quantity_diff_prod = max(1, int(random.expovariate(1/2)))
+        
+        # Create Bought Items
+        bought_items: list[ItemQuant] = self.__choose_products(quantity_diff_prod)
+        
+        # Create Transition
+        return TransactionFactory(items_list=bought_items)       
+    
     def _create_receipt(self):
         
         # Create a receipt 
 
         pass
     
+    def __xml_receipt(self, receipt: ReceiptMeta) :
+        pass
+    
+    def __json_receipt(self, receipt: ReceiptMeta) :
+        pass
+    
+    # WIĘCEJ FORMATOW
+    
     def _create_invoice(self):
         # Create an invoice from B2B or B2C
         pass
     
-    def _create_import_order(self):
+    def __xml_invoice(self):
         pass
     
-    def _create_import_(self):
+    def _create_import_order(self, ):
+        pass
+    
+    def _create_import_receiver(self):
         pass
     
 
