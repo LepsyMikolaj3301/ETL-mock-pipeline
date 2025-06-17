@@ -1,0 +1,48 @@
+{   
+    "setup1": {
+        "sim_duration": 10000,
+        "vendor": {
+            "vendor_name": "Acme Corp",
+            "vendor_vat": "123-456-7890",
+            "vendor_eori": "EORI123456",
+            "vendor_regon": "REGON987654",
+            "street": "Main St",
+            "num_of_addr": "123",
+            "city": "Springfield",
+            "postal_code": "00-123",
+            "country": "USA",
+            "email": "contact@acmecorp.com"
+        }
+    },
+    "setup2": {
+        "sim_duration": 10000,
+        "vendor": {
+            "vendor_name": "Globex Inc",
+            "vendor_vat": "987-654-3210",
+            "vendor_eori": "EORI654321",
+            "vendor_regon": "REGON123456",
+            "street": "Elm St",
+            "num_of_addr": "456",
+            "city": "Shelbyville",
+            "postal_code": "11-456",
+            "country": "Canada",
+            "email": "info@globex.com"
+        }
+    },
+    "setup3": {
+        "sim_duration": 10000,
+        "vendor": {
+            "vendor_name": "Initech",
+            "vendor_vat": "555-123-4567",
+            "vendor_eori": "EORI789012",
+            "vendor_regon": "REGON654321",
+            "street": "Oak Ave",
+            "num_of_addr": "789",
+            "city": "Capital City",
+            "postal_code": "22-789",
+            "country": "UK",
+            "email": "support@initech.co.uk"
+        }
+    }
+    
+}

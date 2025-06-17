@@ -2,7 +2,7 @@
 CREATE USER etl WITH PASSWORD 'etl';
 
 -- Grant connection and usage on the database
-GRANT CONNECT ON DATABASE mydb TO etl;
+GRANT CONNECT ON DATABASE clients TO etl;
 
 -- Grant privileges on schema public
 

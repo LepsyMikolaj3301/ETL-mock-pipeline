@@ -1,0 +1,131 @@
+shoe_id,shoe_brand,shoe_model_name,shoe_category,shoe_price,currency
+f8521800-8f3a-44f9-9668-2f1ab57f1549,Skechers,Max Stride TX148,Work,337.99,EUR
+ea7f4115-8a1c-48b9-9439-cb4aa98ac454,Brooks,Max Zoom TX116,Loafers,436.99,EUR
+80c7e667-3a81-4fc7-a450-d71419a1f046,Reebok,Pro Boost FX101,Formal,396.99,EUR
+e41c3f7d-69fb-4634-a6a2-d5ff9656d930,Timberland,Swift Dash XR116,Walking,343.99,EUR
+35c7d8f3-7518-47b2-9c70-8434aac02207,Salomon,Elite Ride TX157,Athletic,284.99,EUR
+c4591e43-a191-465e-9dec-e749cdd44c9a,Salomon,Max Blast GT166,Hiking,281.99,EUR
+bc55f19d-84ba-4e6f-89f3-893d70495fb4,Converse,Speed Force XR104,Soccer,300.99,EUR
+f853e495-9961-4e06-a4bf-ba263ee9c779,Vans,Dynamic Dash X127,Clogs,220.99,EUR
+23662c3c-99ad-4801-a0c6-377204af1f25,Reebok,Active Boost X101,High Tops,381.99,EUR
+6ce63400-6277-4511-83bf-b729b74a6d8e,Vans,Swift Pulse Z177,Boots,294.99,EUR
+df48cf78-9753-4031-9074-961d2b4eec48,Timberland,Active Runner Z137,Formal,399.99,EUR
+6c3d4d64-8104-419c-bd4e-c990a450d12e,Nike,Flex Track FX131,Slip-On,322.99,EUR
+a9e6134f-59c4-4355-95ee-188f6b5f292d,Birkenstock,Swift Zoom X164,Outdoor,312.99,EUR
+1a583f6c-5119-4e53-81f3-13cba85471ae,Clarks,Fusion Boost HD111,Running,294.99,EUR
+fc7d5427-f83f-43c8-b055-c103c1d3b97b,Clarks,Storm Stride TX128,Athletic,282.99,EUR
+d051aee8-7495-4ecc-9997-bc7452add540,Reebok,Storm Wing Z140,Running,259.99,EUR
+30858251-0357-407e-afcd-243d4ff6e744,Clarks,True Dash XR105,Basketball,362.99,EUR
+b9784126-426d-4ef0-8b8c-e02d8b008911,Vans,Nova Pulse TX127,Basketball,310.99,EUR
+9d7c044e-a971-43ed-be02-8b8f0123f994,Under Armour,Hyper Step V112,High Tops,407.99,EUR
+6ad69eec-a6dc-4459-883c-bcdd6797bb9e,Adidas,Storm Blast V159,Clogs,314.99,EUR
+6546d9c3-9f43-449f-a308-b93f73bbf477,Gucci,Max Pulse X164,Work,219.99,EUR
+2d75121b-457b-4d60-a61c-6a3bb43a2768,Converse,Storm Ride LT196,High Tops,365.99,EUR
+0b9398a4-ab44-42f8-959e-df7b2cd6c0eb,Balenciaga,Pro Blaze X178,Work,260.99,EUR
+137ce245-7fec-429b-b2b3-98fde11aa526,Clarks,Pro Pulse V165,Golf,318.99,EUR
+9fdbc6c5-9356-4dff-88f6-7fff4a9eaa0f,Converse,Power Zoom X100,Basketball,318.99,EUR
+202fa104-45da-4cda-8ede-c7ddb0a7a734,Adidas,Max Boost M112,High Tops,273.99,EUR
+c28031e3-6ec0-46c3-beeb-82453c233143,Clarks,Hyper Stride Z181,Sandals,269.99,EUR
+bea978cc-cb43-420b-8f67-a81e45a9482d,Merrell,Elite Lift HD198,Running,263.99,EUR
+6ff25965-652a-4a94-8b8e-226127c42916,Vans,Flex Dash GT195,Slippers,290.99,EUR
+451af729-861d-42ea-9f0a-883ab4eb01d8,Gucci,Pro Dash GT112,Hiking,349.99,EUR
+9cb74e3e-155b-475b-961f-3079aa57df59,Salomon,Ultra Zoom X143,Golf,234.99,EUR
+00fee005-c853-473b-a8b4-138825bf1d06,Birkenstock,Prime Form TX164,Sandals,178.99,EUR
+1a39998d-9fb0-43ac-99cc-ee76933e22e4,Skechers,Speed Blast TX132,Casual,340.99,EUR
+99ad91f6-5637-4f53-a421-f26195be5d94,Vans,Hyper Dash V126,Soccer,330.99,EUR
+f81e413a-da3f-444d-b744-91df2de634dc,Skechers,Fusion Flow HD185,Boots,325.99,EUR
+31a1e6c5-d3cc-46c9-b322-bf4e0cfb6bde,Nike,Storm Flow LT123,Sandals,309.99,EUR
+83876f6a-46bd-4b36-80d4-1480c34f317c,Balenciaga,Core Track HD190,Soccer,247.99,EUR
+40d2813c-3a6f-43ef-a517-d2e5febdee34,Adidas,Storm Form FX191,Fashion,253.99,EUR
+2a7fc13a-41b0-4287-b569-e78d46207648,Clarks,Quantum Edge X169,Work,441.99,EUR
+2a3221f2-a25e-4053-aac9-b934e8d96429,Birkenstock,Fusion Force X178,Casual,253.99,EUR
+fd1cd6a9-93a5-485f-a8ee-45361c3e53d3,New Balance,Power Track X142,Walking,304.99,EUR
+71741be4-d306-436d-85fd-c01daebf5097,New Balance,Quantum Stride XR127,Work,260.99,EUR
+c5640192-517b-4d3a-a402-9e8818d2304c,Dr. Martens,Prime Pulse HD140,Basketball,301.99,EUR
+b8e94d35-082d-40d5-b4b1-a8f1af89d28e,Adidas,Flex Grip X133,Hiking,293.99,EUR
+335f85b3-7cca-4370-9909-ee4f60321d97,Skechers,Nova Boost Z144,Slip-On,309.99,EUR
+7b18e000-3863-4cf6-8bab-162ec231d863,Merrell,Core Trail LT153,Soccer,259.99,EUR
+d3b82b05-6cc4-4989-9f6d-0ed7eae4e078,Brooks,Aero Track M114,Flip Flops,321.99,EUR
+ccf0d147-4547-4a1e-abdc-4641a2afa870,Puma,Speed Blaze V145,Slip-On,363.99,EUR
+ef5eb11a-7df1-4cea-9aba-cfc4b176bec2,Adidas,Core Zoom GT155,Soccer,297.99,EUR
+ef4edd0e-f2e6-410c-b971-fa4d93555df4,Salomon,Ultra Trail Z152,Walking,204.99,EUR
+525cb069-23f4-4c21-8a02-94281521a189,HOKA ONE ONE,Dynamic Runner X193,Running,299.99,EUR
+fbddc81f-8364-44c7-bccf-b5425955c666,Gucci,Quantum Flow Z112,Casual,268.99,EUR
+678ae473-c431-462b-b53d-4b737a11c55e,Dr. Martens,True Pulse XR147,Hiking,303.99,EUR
+132d2287-fd7e-4563-808b-55d81108eabf,Birkenstock,Storm Edge LT127,Outdoor,321.99,EUR
+57cba96b-13d5-48d0-83ce-ce8e8604c424,Salomon,Max Pulse Z170,Trail,320.99,EUR
+b0bed09c-aaa4-4201-865c-b382c93fcbb1,Balenciaga,Fusion Boost FX121,Low Tops,417.99,EUR
+de1aaf30-9e32-4039-b829-523313eac7b7,Under Armour,Active Blast X128,Athletic,228.99,EUR
+57f39d3d-d441-4c6c-8ea7-7080dc706aa1,Reebok,Prime Dash M137,Sandals,250.99,EUR
+dcc305e4-c8b9-43ed-ba34-89c487b67d2e,ASICS,Flex Trail TX125,Loafers,287.99,EUR
+043c6439-be89-4341-9e40-7e0c8dbde176,Nike,Quantum Pulse V139,Flip Flops,277.99,EUR
+1c49f1ae-03fc-4f73-a9f2-ac50f9abd5f2,HOKA ONE ONE,True Zoom V131,Formal,324.99,EUR
+3af67f02-44f2-444c-a25a-4ba6e7c72f12,Under Armour,Max Force FX194,Loafers,275.99,EUR
+4fb0a79b-854c-4ef0-99d7-164605e841bc,Adidas,Fusion Blast V184,Flip Flops,256.99,EUR
+1569dc56-5537-4817-a7ec-b6ac4c01f406,ASICS,Active Runner TX115,Flip Flops,362.99,EUR
+ad5bcac2-13b2-48ee-bbd8-53916fa1a196,Balenciaga,Prime Wing LT133,Running,340.99,EUR
+ea17d61b-4962-482e-b0e3-52935ce549f6,Birkenstock,Hyper Stride Z199,Soccer,252.99,EUR
+ece94cbc-7eaf-414a-8f47-8fba95d5f009,Clarks,Active Form TX180,Boots,289.99,EUR
+12e513ae-ae57-470e-90ef-ba7202304798,Under Armour,Swift Form M187,Formal,329.99,EUR
+123c4e5d-e0ff-47af-b492-0910b9600fc2,ASICS,Core Step TX121,Low Tops,275.99,EUR
+6b0f6cc6-79b3-45b7-93fd-48ea935621d7,Birkenstock,Ultra Form V124,Boots,383.99,EUR
+9cc61a21-eb97-4b13-a24f-dca0d3588b6e,Balenciaga,Dynamic Grip X142,Tennis,417.99,EUR
+9577a7bf-3097-40f3-84be-059d40e13ae9,Gucci,Ultra Trail LT111,Slippers,191.99,EUR
+f93fa09e-1081-4fb8-81b4-cd556ff67793,Nike,Power Step X152,Athletic,268.99,EUR
+48cb9d48-5cad-4203-862c-c31afd08905e,Clarks,Light Wing M163,Trail,214.99,EUR
+cab8ff81-ebee-4543-b3b4-8bb6ea358a4a,Timberland,Storm Drive TX106,Hiking,239.99,EUR
+2abd5e53-c1cc-47b3-8df8-8578f6658b92,Balenciaga,Power Runner FX129,Trail,260.99,EUR
+8626d9bf-e487-461a-909f-6ab8ec1489f6,Gucci,Aero Form TX107,Slip-On,294.99,EUR
+ea406788-0806-4d05-be82-2efa776584e0,New Balance,Active Flow LT162,Skate,328.99,EUR
+ae75185b-2041-4e03-a4bc-3e898faa3b9f,Merrell,Fusion Stride FX155,Loafers,309.99,EUR
+d7a73e37-4e35-4b04-a946-fe06a7c16c8d,Converse,Storm Form M159,Slippers,138.99,EUR
+4da384d7-0aca-46d7-b181-939c58b8ae91,Gucci,Ultra Track HD102,Work,379.99,EUR
+cde7a5ea-3ce0-42d0-87ae-6889f097362e,Birkenstock,Core Form XR172,Outdoor,353.99,EUR
+ee939b03-d12f-4854-bedd-c50aa430ba68,Nike,Dynamic Form Z136,Soccer,139.99,EUR
+cdf5d171-3b8f-40b1-b387-8943837a16b7,Nike,Core Blaze LT182,Slip-On,251.99,EUR
+6393ce00-6802-4030-973f-f4e56daf7368,ASICS,Fusion Dash V103,High Tops,299.99,EUR
+20916951-c6f5-4755-9c55-e4038203e3ac,Under Armour,Speed Grip M193,Sandals,268.99,EUR
+aa58b89f-3f80-4206-aa21-a12942de78bc,ASICS,Pro Track HD135,Clogs,215.99,EUR
+f5750623-9fea-4867-ac85-b2a3da1f3cb6,Balenciaga,Pro Lift XR142,Hiking,232.99,EUR
+6eb44554-cd1f-4886-8936-e0fd60e00cec,Under Armour,Power Flow XR164,Flip Flops,352.99,EUR
+cb6e9db9-c4b3-4226-afbe-4247b0b0a14f,Timberland,Max Runner XR114,Sandals,227.99,EUR
+ed0c551f-c1bc-4be0-8711-19f77df5d817,Converse,Quantum Flow FX139,Golf,324.99,EUR
+ad65f64c-ebbf-4c46-b729-ed39b3485e9e,Converse,Power Blast GT168,Flip Flops,221.99,EUR
+0c4c0881-a459-4251-8554-05fa3aa58b96,ASICS,Swift Grip M193,Training,283.99,EUR
+8f770731-0ca4-4d77-bb2f-93e7ddf1faab,Birkenstock,Elite Trail X184,Low Tops,201.99,EUR
+0659d6d4-0482-4f1c-af68-465fffe0ed88,Clarks,Active Trail XR160,Skate,289.99,EUR
+e2c2f1c6-b4b0-44ab-b3e3-aa34e9466bc3,Nike,Storm Blaze X198,High Tops,343.99,EUR
+e4a7bcfb-2849-4142-ba24-bd16cc283157,Balenciaga,Pro Track X146,Casual,333.99,EUR
+02b6ea72-bca6-49d1-bd35-dd41ea30d145,Balenciaga,Aero Drive Z183,Fashion,292.99,EUR
+b46fb8f1-b89c-4cc5-ac0a-6e493b0ed02d,Adidas,Core Zoom X135,Basketball,330.99,EUR
+8b647223-0d90-4185-8117-c6a2662e8fa2,ASICS,Prime Drive LT106,Formal,221.99,EUR
+b5eaa8a3-ef89-45a3-9b62-838679de239c,Balenciaga,Pro Boost FX186,Hiking,260.99,EUR
+c36ab6bf-07af-4133-8b87-b88256183ba4,Adidas,Speed Dash M118,Walking,276.99,EUR
+6c696ba4-5077-4303-be19-bb28813fe82b,Clarks,Max Stride GT125,Walking,416.99,EUR
+5a8469bd-bf4b-4c2b-8bf3-18f13a61b499,Balenciaga,Pro Boost GT132,Running,359.99,EUR
+770dd054-4744-4f7d-b81f-3375ff7552e1,New Balance,Dynamic Track X174,Running,386.99,EUR
+46c6b429-8266-4548-91a9-35c3bbc9a6d4,Skechers,Max Track GT153,Slippers,463.99,EUR
+fa313259-a34f-4587-b367-904af346465e,Dr. Martens,True Dash FX180,Trail,333.99,EUR
+dae02d10-fe7c-4d75-9508-30aa8711323a,Timberland,Max Runner GT133,Golf,291.99,EUR
+6a2fc252-b88e-4b3f-bf0e-4600366bb61b,Birkenstock,Max Stride XR162,Slip-On,315.99,EUR
+feab0377-51d7-428d-94ab-9375426ccd32,Dr. Martens,Hyper Flow LT102,Loafers,391.99,EUR
+02d677a1-e128-4a25-97eb-910a9cd154fe,Balenciaga,Aero Form Z131,Flip Flops,243.99,EUR
+4f308b92-db05-42b1-abf8-499e0334faf1,Nike,Speed Blaze XR173,Sandals,342.99,EUR
+3ebaf966-5393-475d-9ec8-100b13555882,Nike,Elite Step X177,Flip Flops,243.99,EUR
+05ca7158-12be-4c27-96ad-fe08cbee6b87,Nike,Fusion Force Z131,Loafers,450.99,EUR
+6c06cc77-1abe-4b53-918c-94950be9b6d8,Under Armour,Quantum Force HD160,Running,307.99,EUR
+b0f656fd-f44e-4725-be2f-eeebb896ad0b,Vans,Pro Track GT140,Outdoor,199.99,EUR
+d2475998-b230-49ec-9bf5-79e29c3c3f8f,Merrell,Aero Blast FX155,Skate,345.99,EUR
+fe43aea0-3122-4386-bcfd-39a1681f05d1,Puma,Hyper Trail X186,Flip Flops,255.99,EUR
+0ed71229-5cdc-42f3-8f84-ad4ae3ab355d,Salomon,True Edge Z100,Slippers,313.99,EUR
+896ecd30-7b68-413a-8ca9-0c35e3b2738a,Dr. Martens,Max Blast M167,Walking,421.99,EUR
+4a2a1193-5964-463c-9a57-43e83fa02554,Adidas,Storm Drive LT163,Low Tops,282.99,EUR
+7dc755ef-39ad-4b09-9fc1-059e825e3c55,Dr. Martens,Quantum Step V167,Flip Flops,337.99,EUR
+f08770df-e0e1-466d-b2c8-2c2049823142,Timberland,Light Pulse HD196,Slippers,393.99,EUR
+a573d6b8-f5b8-43d6-8ecb-89e4e90037b0,Skechers,Fusion Force X177,Loafers,385.99,EUR
+714eb249-bc18-4c71-960a-f99039e08f11,HOKA ONE ONE,Storm Blaze Z139,Hiking,129.99,EUR
+e339a222-94cf-40a6-9250-6e069d80d551,New Balance,Core Grip GT102,Sandals,274.99,EUR
+2489d5c0-924f-4ecd-80e6-401ee0c9e2cd,HOKA ONE ONE,Nova Boost M146,High Tops,408.99,EUR
+ed7f6e38-fd77-4ff1-bed9-bceb356523b0,Brooks,Pro Wing LT180,Soccer,262.99,EUR
+41b6c7c6-907a-44fd-bd52-ae33e2f8f7c5,Adidas,Elite Pulse LT161,Work,273.99,EUR
+c7d94517-ae13-413b-a98f-b936700c1ee3,Converse,Dynamic Flow XR117,Formal,302.99,EUR

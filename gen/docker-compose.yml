@@ -3,22 +3,111 @@ networks:
   db_net:
 
 services:
-  shoe_storage_db:
-    restart: no
-    image: postgres:latest
-    container_name: shoe_storage_db_cont
+  # shoe_storage_db:
+  #   restart: no
+  #   image: postgres:latest
+  #   container_name: shoe_storage_db_cont
+  #   environment:
+  #     POSTGRES_USER: postgres
+  #     POSTGRES_PASSWORD: postgres
+  #     POSTGRES_DB: shoe_storage
+  #   ports:
+  #     - "5433:5432"
+  #   volumes:
+  #     # - ./docker/postgres/tablespace:/mnt/tablespace       # Mount tablespace dir
+  #     - pgdata:/var/lib/postgresql/data                 # Main DB data
+  #     - ./docker/postgres_dbs/shoe_storage_db/init/init.sql:/docker-entrypoint-initdb.d/init.sql  # Optional SQL
+  #   networks:
+  #     - db_net
+  
+  # gen_data:
+  #   build:
+  #     context: ./
+  #     dockerfile: /docker/gen_s_data/Dockerfile
+  #   container_name: gen_data_cont
+  #   networks:
+  #     - db_net
+  #   depends_on:
+  #     - shoe_storage_db
+  #     # - client_db
+  #   environment:
+  #     # SHOE STORAGE CONNECTION VARIABLES
+  #     SHOE_DB_NAME: shoe_storage
+  #     SHOE_DB_USER: store
+  #     SHOE_DB_PASS: store
+  #     SHOE_DB_HOST: shoe_storage_db
+  #     SHOE_DB_PORT: 5432
+  shoe_shop_simulation_starter:
+    image: alpine:latest
+    container_name: shoe_shop_simulation_starter
+    command: ["sh", "-c", "echo Starting shoe shop simulations..."]
+    depends_on:
+      - shoe_shop_simulation_1
+      - shoe_shop_simulation_2
+      - shoe_shop_simulation_3
+    networks:
+      - db_net
+
+  shoe_shop_simulation_1:
+    build:
+      context: .
+      dockerfile: /docker/shoe_shop_simulation/Dockerfile
+    container_name: shoe_shop_simulation__1
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: shoe_storage
+      SETUP_ID: setup1
+
     ports:
       - "5433:5432"
+      - "8001:8000"
     volumes:
-      # - ./docker/postgres/tablespace:/mnt/tablespace       # Mount tablespace dir
-      - pgdata:/var/lib/postgresql/data                 # Main DB data
-      - ./docker/postgres_dbs/shoe_storage_db/init/init.sql:/docker-entrypoint-initdb.d/init.sql  # Optional SQL
+      - pgdata1:/var/lib/postgresql/data                
+      - ./docker/shoe_shop_simulation/shoe_storage_db/init/init.sql:/docker-entrypoint-initdb.d/init.sql  # Optional SQL
     networks:
       - db_net
+
+  shoe_shop_simulation_2:
+    build:
+      context: .
+      dockerfile: /docker/shoe_shop_simulation/Dockerfile
+    container_name: shoe_shop_simulation__2
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: shoe_storage
+      SETUP_ID: setup2
+
+    ports:
+      - "5434:5432"
+      - "8002:8000"
+    volumes:
+      - pgdata2:/var/lib/postgresql/data                 
+      - ./docker/shoe_shop_simulation/shoe_storage_db/init/init.sql:/docker-entrypoint-initdb.d/init.sql  # Optional SQL
+    networks:
+      - db_net
+
+  shoe_shop_simulation_3:
+    build:
+      context: .
+      dockerfile: /docker/shoe_shop_simulation/Dockerfile
+    container_name: shoe_shop_simulation__3
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: shoe_storage
+      SETUP_ID: setup3
+
+    ports:
+      - "5435:5432"
+      - "8003:8000"
+    volumes:
+      - pgdata3:/var/lib/postgresql/data                 # Main DB data
+      - ./docker/shoe_shop_simulation/shoe_storage_db/init/init.sql:/docker-entrypoint-initdb.d/init.sql  # Optional SQL
+    networks:
+      - db_net
+
   client_db:
     restart: no
     image: postgres:latest
@@ -28,36 +117,21 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: clients
     ports:
-      - "5434:5432"
+      - "5436:5432"
     volumes:
       # - ./docker/postgres/tablespace:/mnt/tablespace       # Mount tablespace dir
-      - pgdata:/var/lib/postgresql/data                 # Main DB data
+      - pgdata_c:/var/lib/postgresql/data                 # Main DB data
       - ./docker/postgres_dbs/client_db/init/init.sql:/docker-entrypoint-initdb.d/init.sql  # Optional SQL
     networks:
       - db_net
-  
-  gen_data:
-    build:
-      context: ./
-      dockerfile: /docker/gen_s_data/Dockerfile
-    container_name: gen_data_cont
-    networks:
-      - db_net
-    depends_on:
-      - shoe_storage_db
-      - client_db
-    environment:
-      # SHOE STORAGE CONNECTION VARIABLES
-      SHOE_DB_NAME: shoe_storage
-      SHOE_DB_USER: store
-      SHOE_DB_PASS: store
-      SHOE_DB_HOST: shoe_storage_db
-      SHOE_DB_PORT: 5433
-      # CLIENT CONNECTION VARIABLES
-      CLIENT_DB_NAME: clients
-      CLIENT_DB_USER: postgres
-      CLIENT_DB_PASS: postgres
-      CLIENT_DB_HOST: client_db
-      CLIENT_DB_PORT: 5434
+  # # CLIENT CONNECTION VARIABLES
+  #     CLIENT_DB_NAME: clients
+  #     CLIENT_DB_USER: postgres
+  #     CLIENT_DB_PASS: postgres
+  #     CLIENT_DB_HOST: client_db
+  #     CLIENT_DB_PORT: 5434
 volumes:
-  pgdata:
+  pgdata_c:
+  pgdata1:
+  pgdata2:
+  pgdata3:

@@ -1,5 +1,4 @@
 import random
-import factory.utils
 from faker import Faker
 from faker. providers import barcode
 from utils_gen import ShoeProvider, client_gender
@@ -7,6 +6,7 @@ from sqlalchemy.sql import func
 from sqlalchemy.sql.expression import func
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, String, Numeric, Integer, Float, Date
+from sqlalchemy.orm import relationship
 from dataclasses import dataclass, field
 from datetime import datetime
 import factory
@@ -26,21 +26,25 @@ Base = declarative_base()
 
 class Shoe(Base):
     __tablename__ = 'shoe_table'
-    shoe_id = Column(String(36), primary_key=True)
-    brand = Column(String(100))
-    model_name = Column(String(100), nullable=False)
-    category = Column(String(50))
-    price = Column(Numeric(10, 2), nullable=False)
+    shoe_id = Column(String(36), ForeignKey('storage_table.product_id'), primary_key=True)
+    shoe_brand = Column(String(100))
+    shoe_model_name = Column(String(100), nullable=False)
+    shoe_category = Column(String(50))
+    shoe_price = Column(Numeric(10, 2), nullable=False)
     currency = Column(String(3))
+
+    storage = relationship("Storage", back_populates="shoe", uselist=False)
 
 class Storage(Base):
     __tablename__ = 'storage_table'
     product_id = Column(String(13), primary_key=True)
     # Add ForeignKey constraint to reference Shoe.shoe_id
-    shoe_id = Column(String(36), ForeignKey('shoe_table.shoe_id'), nullable=False)
-    shoe_size = Column(Float())
-    quantity = Column(Integer())
+    shoe_id = Column(String(36), nullable=False)
+    shoe_size = Column(Integer())
+    product_quantity = Column(Integer())
     
+    shoe = relationship("Shoe", back_populates="storage", uselist=False)
+
 class Client(Base):
     __tablename__ = 'clients_table'
     client_id = Column(String(36), primary_key=True)
@@ -61,18 +65,40 @@ class ShoeTableFactory(SQLAlchemyModelFactory):
     class Meta: # type: ignore
         model = Shoe
         sqlalchemy_session = None
-        
-    class Params:
-        currency: str
-
+        sqlalchemy_session_persistence = 'flush'
+    
     shoe_id = factory.declarations.LazyAttribute(lambda _: fake.uuid4())
-    brand = factory.declarations.LazyAttribute(lambda _: fake.shoe_brand())
-    model_name = factory.declarations.LazyAttribute(lambda _: fake.shoe_name())
-    category = factory.declarations.LazyAttribute(lambda _: fake.shoe_category())
-    price = factory.declarations.LazyAttribute(lambda _: fake.shoe_price())
+    shoe_brand = factory.declarations.LazyAttribute(lambda _: fake.shoe_brand())
+    shoe_model_name = factory.declarations.LazyAttribute(lambda _: fake.shoe_name())
+    shoe_category = factory.declarations.LazyAttribute(lambda _: fake.shoe_category())
+    shoe_price = factory.declarations.LazyAttribute(lambda _: fake.shoe_price())
     currency = factory.declarations.LazyAttribute(lambda self: self.currency)
 
+    
+class StorageTableFactory(SQLAlchemyModelFactory):
+    class Meta: # type: ignore
+        model = Storage
+        sqlalchemy_session = None
+        sqlalchemy_session_persistence = 'flush'
+    
+    # class Params:
+    #     shoe_id: str | None = None
+    #     shoe_size: int | None = None
+    
+    product_id = factory.declarations.LazyAttribute(lambda _: fake.ean13())
+    shoe_id = factory.declarations.LazyAttribute(lambda o: o.shoe_id)
+    shoe_size = factory.declarations.LazyAttribute(lambda o: o.shoe_size)
+    product_quantity = factory.declarations.LazyAttribute(lambda _: random.randint(10, 45))
+    
+    # @classmethod
+    # def _create(cls, model, **kwargs):
+    #     """Custom instantiation to handle custom parameters."""
+    #     shoe_id = kwargs.pop('shoe_id')  # you can manipulate here
+    #     shoe_size = kwargs.pop('shoe_size')
+    #     storage = model(shoe_id=shoe_id, shoe_size=shoe_size, **kwargs)
 
+    #     return storage
+    
 def init_storage_vals(shoe_ids) -> list:
     values = []
     for si in shoe_ids:
@@ -173,9 +199,9 @@ class TransactionFactory(factory.base.Factory):
         model = Transaction
 
     class Params:
-        items_list: list[ItemQuant] | None = None
+        items_list_param: list[ItemQuant] | None = None
 
-    items_list = factory.declarations.LazyAttribute(lambda self: self.items_list if self.items_list is not None else [])
+    items_list = factory.declarations.LazyAttribute(lambda self: self.items_list_param if self.items_list_param is not None else [])
     
     transaction_type = factory.declarations.LazyFunction(lambda: random.choice(['CARD', 'CASH', 'ONLINE', 'BLIK', 'PAYPAL']))
     
@@ -203,7 +229,7 @@ class Vendor:
     postal_code: str
     country: str
     email: str
-    
+
 # --------------------------------------------------------------------
 #    RECEIPTs
 # --------------------------------------------------------------------
@@ -342,8 +368,8 @@ class ItemInvoiceFactory(factory.base.Factory):
     item_barcode = factory.declarations.LazyAttribute(lambda o: o.item_quant.item_barcode)
     item_meta_quantity = 'Szt.'
     item_quantity = factory.declarations.LazyAttribute(lambda o: o.item_quant.quantity)
-    price_ind_net = factory.declarations.LazyAttribute(lambda o: round(o.item_quant.price_ind - (0.23 * o.item_quant.price_ind), 2))
-    value_net = factory.declarations.LazyAttribute(lambda o: round(o.price_ind_net * o.item_quant.quantity, 2))
+    price_ind_net = factory.declarations.LazyAttribute(lambda o: round(float(o.item_quant.price_ind) - (0.23 * float(o.item_quant.price_ind)), 2))
+    value_net = factory.declarations.LazyAttribute(lambda o: round(o.price_ind_net * int(o.item_quant.quantity), 2))
     price_ind_gross = factory.declarations.LazyAttribute(lambda o: o.item_quant.price_ind)
     value_gross = factory.declarations.LazyAttribute(lambda o: round(o.item_quant.price_ind * o.item_quant.quantity, 2))
     item_vat = "23%"
@@ -360,7 +386,7 @@ class InvoiceMeta:
     vendor_eori: str
     vendor_regon: str
     vendor_address: str
-    buyer: str
+    buyer: Buyer
     items: List[ItemInvoice]
     value_sum_net: float
     value_sum_gross: float
