@@ -34,7 +34,7 @@ from factories import ShoeTableFactory, ClientTableFactory, StorageTableFactory
 # Receipt and Invoice generation
 from factories import ItemQuant, Transaction, TransactionFactory, Vendor
 from factories import ReceiptMeta, ReceiptFactory, InvoiceMeta, InvoiceFactory
-from factories import fake
+from factories import format_invoice, format_receipt
 import os
 from sqlalchemy.sql.expression import func
 
@@ -326,6 +326,7 @@ class ShoeShopSimulation:
         logger.info(f"TRANSACTION MADE AT {datetime.datetime.now()}")
         return TransactionFactory(items_list_param=bought_items)       
     
+    
     def _create_receipt(self, transaction: Transaction, file_format: list[str]):
         
         # Create a receipt 
@@ -333,9 +334,9 @@ class ShoeShopSimulation:
 
         for ff in file_format:
             if ff == 'xml':
-                self.__xml_receipt(receipt_meta_obj)
+                self.__xml_receipt(format_receipt(receipt_meta_obj, date_format='%Y-%m-%d'))
             if ff == 'json':
-                self.__json_receipt(receipt_meta_obj)
+                self.__json_receipt(format_receipt(receipt_meta_obj, date_format='%d-%m-%Y'))
         
     
     def __xml_receipt(self, receipt: ReceiptMeta) :
@@ -394,7 +395,7 @@ class ShoeShopSimulation:
             "cash_reg_id": getattr(receipt, "cash_reg_id", None)
         }
 
-        file_path_name = f"{self.RECEIPT_DIRECTORY}/receipt_{datetime.datetime.now().strftime('%d_%m_%Y__%H:%M:%S')}.json"
+        file_path_name = f"{self.RECEIPT_DIRECTORY}/receipt_{datetime.datetime.now().strftime('%Y_%m_%d__%H:%M:%S')}.json"
         with open(file_path_name, "w+", encoding="utf-8") as f:
             json.dump(receipt_dict, f, ensure_ascii=False, indent=4)
         logger.info(f"Receipt JSON file created as {file_path_name}")
@@ -408,9 +409,9 @@ class ShoeShopSimulation:
 
         for ff in file_format:
             if ff == 'xml':
-                self.__xml_invoice(invoice_meta_obj)
+                self.__xml_invoice(format_invoice(invoice_meta_obj, date_format='%Y-%m-%d'))
             if ff == 'edi':
-                self.__edifact_invoice(invoice_meta_obj)
+                self.__edifact_invoice(format_invoice(invoice_meta_obj, date_format='%Y_%m_%d'))
         
             
     
@@ -461,7 +462,7 @@ class ShoeShopSimulation:
         safe_set(root, "AdditionalNotes", getattr(invoice, "addit_notes", None))
         safe_set(root, "Currency", getattr(invoice, "currency", None))
 
-        file_path_name = f"{self.RECEIPT_DIRECTORY}/invoice_{datetime.datetime.now().strftime('%Y_%m_%d_%H:%M:%S')}.xml"
+        file_path_name = f"{self.RECEIPT_DIRECTORY}/invoice_{datetime.datetime.now().strftime('%Y_%m_%d__%H:%M:%S')}.xml"
         tree = ET.ElementTree(root)
         with open(file_path_name, "wb+") as f:
             tree.write(f, encoding="utf-8", xml_declaration=True)
@@ -531,7 +532,7 @@ class ShoeShopSimulation:
 
         # Write the EDIFACT file
         edifact_str = invoice_to_edifact(invoice)
-        file_path_name = f"{self.INVOICE_DIRECTORY}/invoice_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.edi"
+        file_path_name = f"{self.INVOICE_DIRECTORY}/invoice_{datetime.datetime.now().strftime('%Y_%m_%d__%H:%M:%S')}.edi"
         with open(file_path_name, "w+", encoding="utf-8") as f:
             f.write(edifact_str)
         logger.info(f"Invoice EDIFACT file created as {file_path_name}")
@@ -576,7 +577,7 @@ if __name__ == '__main__':
     
     init_shoe_DB(shoe_db_conn)
     
-    sim_duration = setup_config.get('sim_duration', 1000000)
+    sim_duration = setup_config.get('sim_duration', 1000)
     
     vendor = Vendor(**setup_config['vendor'])
     

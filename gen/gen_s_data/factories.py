@@ -446,7 +446,40 @@ class InvoiceFactory(factory.base.Factory):
     addit_notes = factory.declarations.LazyAttribute(lambda n: fake.text(300))
 
     
- 
+def format_receipt(receipt: ReceiptMeta, **kwargs) -> ReceiptMeta:
+    """Formatting function to enable differences in different formats
+        AVAILABLE KWARGS:
+            - date_format: Datetime format for the DATE ONLY (to strftime)
+
+    Args:
+        receipt (ReceiptMeta): The standard Receipt dataclass
+
+    Returns:
+        ReceiptMeta: Changed obj
+    """
+    date_format = kwargs.get('date_format')
+    receipt_ch = receipt
+    if date_format:
+        # Convert receipt_date string to datetime and format if needed
+        dt = datetime.strptime(receipt_ch.receipt_date.split(';')[0], '%Y-%m-%d')
+        receipt_ch.receipt_date = dt.strftime(date_format)
+    
+    # Add anything else IF NEEDED
+    
+    return receipt_ch
+
+def format_invoice(invoice: InvoiceMeta, **kwargs) -> InvoiceMeta:
+    
+    
+    invoice_ch = invoice
+    date_format = kwargs.get('date_format')
+
+    if date_format:
+        # Convert receipt_date string to datetime and format if needed
+        dt = datetime.strptime(invoice_ch.invoice_date.split(';')[0], '%Y-%m-%d')
+        invoice.invoice_date = dt.strftime(date_format)
+    
+    return invoice_ch
 
  
 
