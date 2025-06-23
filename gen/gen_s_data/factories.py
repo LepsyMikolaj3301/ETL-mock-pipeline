@@ -457,11 +457,11 @@ def format_receipt(receipt: ReceiptMeta, **kwargs) -> ReceiptMeta:
     Returns:
         ReceiptMeta: Changed obj
     """
-    date_format = kwargs.get('date_format')
+    date_format = kwargs.get('datetime_format')
     receipt_ch = receipt
     if date_format:
         # Convert receipt_date string to datetime and format if needed
-        dt = datetime.strptime(receipt_ch.receipt_date.split(';')[0], '%Y-%m-%d')
+        dt = datetime.strptime(receipt_ch.receipt_date, "%Y-%m-%d;%H:%M:%S")
         receipt_ch.receipt_date = dt.strftime(date_format)
     
     # Add anything else IF NEEDED
@@ -472,12 +472,12 @@ def format_invoice(invoice: InvoiceMeta, **kwargs) -> InvoiceMeta:
     
     
     invoice_ch = invoice
-    date_format = kwargs.get('date_format')
+    date_format = kwargs.get('datetime_format')
 
     if date_format:
         # Convert receipt_date string to datetime and format if needed
-        dt = datetime.strptime(invoice_ch.invoice_date.split(';')[0], '%Y-%m-%d')
-        invoice.invoice_date = dt.strftime(date_format)
+        dt = datetime.strptime(invoice_ch.invoice_date, "%Y-%m-%d;%H:%M:%S")
+        invoice_ch.invoice_date = dt.strftime(date_format)
     
     return invoice_ch
 

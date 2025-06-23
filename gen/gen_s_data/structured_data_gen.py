@@ -189,6 +189,18 @@ class ShoeShopSimulation:
     """    
     
     def __init__(self, shoe_db_conn_info, vendor_info: dict, formats: list[str], client_db_conn_info=None) -> None:
+        
+        # FOR SETUP OF THE SIMULATIONS
+        
+        # CREATING NECESSERY DIRECTORIES
+        self.DATA_DIRECTORY = "data"
+        self.RECEIPT_DIRECTORY = os.path.join(self.DATA_DIRECTORY, "receipts")
+        self.INVOICE_DIRECTORY = os.path.join(self.DATA_DIRECTORY, "invoices")
+
+        for directory in [self.DATA_DIRECTORY, self.RECEIPT_DIRECTORY, self.INVOICE_DIRECTORY]:
+            pathlib.Path(directory).mkdir(parents=True, exist_ok=True)
+        
+        # CONNECTING TO DB
         host_port_shoe_db = ':'.join([shoe_db_conn_info['host'], str(shoe_db_conn_info['port'])])
         
         engine_connection_shoe_db = 'postgresql://{}:{}@{}/{}'.format(shoe_db_conn_info['user'],
@@ -219,11 +231,6 @@ class ShoeShopSimulation:
         
         # Counter for import
         self.import_timer = 0
-        
-        # DIRECTORY for storage
-        self.DATA_DIRECTORY = "data"
-        self.RECEIPT_DIRECTORY = self.DATA_DIRECTORY + "/receipts"
-        self.INVOICE_DIRECTORY = self.DATA_DIRECTORY + "/invoices"
         
         # AVAILABLE FORMATS TO USE:
         self.formats = formats
@@ -334,9 +341,9 @@ class ShoeShopSimulation:
 
         for ff in file_format:
             if ff == 'xml':
-                self.__xml_receipt(format_receipt(receipt_meta_obj, date_format='%Y-%m-%d'))
+                self.__xml_receipt(format_receipt(receipt_meta_obj, date_format='%Y-%m-%d__%H:%M:%S'))
             if ff == 'json':
-                self.__json_receipt(format_receipt(receipt_meta_obj, date_format='%d-%m-%Y'))
+                self.__json_receipt(format_receipt(receipt_meta_obj, date_format='%d-%m-%Y__%H:%M:%S'))
         
     
     def __xml_receipt(self, receipt: ReceiptMeta) :
@@ -369,6 +376,7 @@ class ShoeShopSimulation:
         safe_set(root, "CashRegisterID", getattr(receipt, "cash_reg_id", None))
 
         tree = ET.ElementTree(root)
+        ET.indent(tree, space="\t", level=0)
         file_path_name = f"{self.RECEIPT_DIRECTORY}/receipt_{datetime.datetime.now().strftime('%Y_%m_%d__%H:%M:%S')}.xml"
         with open(file_path_name, "wb+") as f:
             tree.write(f, encoding="utf-8", xml_declaration=True)
@@ -409,9 +417,9 @@ class ShoeShopSimulation:
 
         for ff in file_format:
             if ff == 'xml':
-                self.__xml_invoice(format_invoice(invoice_meta_obj, date_format='%Y-%m-%d'))
+                self.__xml_invoice(format_invoice(invoice_meta_obj, date_format='%Y-%m-%dT%H:%M:%S'))
             if ff == 'edi':
-                self.__edifact_invoice(format_invoice(invoice_meta_obj, date_format='%Y_%m_%d'))
+                self.__edifact_invoice(format_invoice(invoice_meta_obj, date_format='%Y_%m_%dT%H:%M:%S'))
         
             
     
@@ -462,8 +470,9 @@ class ShoeShopSimulation:
         safe_set(root, "AdditionalNotes", getattr(invoice, "addit_notes", None))
         safe_set(root, "Currency", getattr(invoice, "currency", None))
 
-        file_path_name = f"{self.RECEIPT_DIRECTORY}/invoice_{datetime.datetime.now().strftime('%Y_%m_%d__%H:%M:%S')}.xml"
+        file_path_name = f"{self.INVOICE_DIRECTORY}/invoice_{datetime.datetime.now().strftime('%Y_%m_%d__%H:%M:%S')}.xml"
         tree = ET.ElementTree(root)
+        ET.indent(tree, space="\t", level=0)
         with open(file_path_name, "wb+") as f:
             tree.write(f, encoding="utf-8", xml_declaration=True)
         logger.info(f"Invoice XML file created as {file_path_name}")
