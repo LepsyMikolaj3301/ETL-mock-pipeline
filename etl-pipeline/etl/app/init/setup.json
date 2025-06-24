@@ -1,0 +1,30 @@
+{
+    "sim_conn_info":[
+        {"sim_1_conn": {
+            "host": "shoe_shop_simulation_1",
+            "port": 8080,
+            "doc_type": ["invoices", "receipts"],
+            "db_port": 5432,
+            "db_username": "etl",
+            "db_password": "etl",
+            "db_database": "shoe_storage"
+        }},
+        {"sim_2_conn": {
+            "host": "shoe_shop_simulation_2",
+            "port": 8080,
+            "doc_type": ["invoices", "receipts"],
+            "db_port": 5433,
+            "db_username": "etl",
+            "db_password": "etl",
+            "db_database": "shoe_storage"
+        }},
+        {"sim_3_conn": {
+            "host": "shoe_shop_simulation_3",
+            "port": 8080,
+            "doc_type": ["invoices", "receipts"],
+            "db_port": 5434,
+            "db_username": "etl",
+            "db_password": "etl",
+            "db_database": "shoe_storage"
+        }}]
+}

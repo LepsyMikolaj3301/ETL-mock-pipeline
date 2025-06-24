@@ -1,5 +1,6 @@
 version: '3.8'
-
+networks:
+  etl_network:
 services:
     spark-master:
         image: bitnami/spark:latest
@@ -16,7 +17,8 @@ services:
         volumes:
             - ./app:/opt/spark-apps
         command: /opt/bitnami/scripts/spark/entrypoint.sh /run.sh
-
+        networks:
+            - etl_network
     spark-worker:
         image: bitnami/spark:latest
         depends_on:
@@ -46,9 +48,36 @@ services:
             - ./app:/opt/spark-apps
         entrypoint: ["/opt/bitnami/spark/bin/spark-submit", "--master", "spark://spark:7077", "/opt/spark-apps/your_script.py"]
 
+    spark-tester:
+        build:
+        context: .
+        dockerfile: docker/spark-tester/Dockerfile.spark-tester
+        container_name: spark-tester
+        depends_on:
+        - spark
+        volumes:
+        - ./app:/app
+        working_dir: /app
+        command: ["python", "test_spark_script.py"]
+        networks:
+            - etl_network
+    etl:
+        build:
+        context: .
+        dockerfile: /docker/airflow/Dockerfile.etl
+        container_name: etl
+        depends_on:
+        - spark
+        - postgres_dw
+        volumes:
+        - ./scripts:/app/scripts
+        working_dir: /app/scripts
+        command: ["python", "etl_main.py"]
+        networks:
+            - etl_network
 # DATA WAREHOUSE
     postgres_dw:
-        image: postgres:16
+        image: postgres:latest
         container_name: postgres_dw
         environment:
             POSTGRES_USER: dw_user
@@ -59,6 +88,8 @@ services:
         volumes:
         - pg_dw_data:/var/lib/postgresql/data
         - .docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql  # Optional: run init scripts
-
+        networks:
+            - etl_network
 volumes:
   pg_dw_data:
+

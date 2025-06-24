@@ -284,8 +284,5 @@ def transform():
     df_invoice = invoice_parser.get_df() 
     df_receipt = receipt_parser.get_df()
     
-    
-    # Show result
-    if df_invoice:
-        df_invoice.printSchema() #type: ignore
-        df_invoice.show(truncate=False)
+    return {"invoice": df_invoice,
+            "receipt": df_receipt}

@@ -42,8 +42,9 @@ def extract_files_url(url_s_conn_info: list[dict]):
         one_hour_ago = one_hour_ago.replace(hour=one_hour_ago.hour - 1 if one_hour_ago.hour > 0 else 23)
         date_str = one_hour_ago.strftime('%Y%m%dT%H0000')
         urls_list = [
-            f"http://{conn_info['host']}:{conn_info['port']}/files/zip/{conn_info['doc_type']}/{date_str}"
+            f"http://{conn_info['host']}:{str(conn_info['port'])}/files/zip/{doctype}/{date_str}"
             for conn_info in url_s_conn_info
+            for doctype in conn_info['doc_type']
         ]
     except KeyError as ke:
         logger.error(f'BAD URL DECLARETION, TO FIX {ke}')
@@ -54,7 +55,8 @@ def extract_files_url(url_s_conn_info: list[dict]):
     if not urls_list:
         #TODO: THINK OF TERMINATION
         # raise RuntimeError()
-        pass
+        logger.error("NO DOCUMENTS PULLED")
+        raise RuntimeError("NO DOCUMENTS PULLED")
     
     # Extract files to TMP_dir
     for url in urls_list:

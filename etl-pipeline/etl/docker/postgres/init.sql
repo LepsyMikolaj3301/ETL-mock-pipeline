@@ -1,3 +1,35 @@
+-- Create the user
+DO
+$$
+BEGIN
+   IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'etl') THEN
+      CREATE ROLE etl WITH LOGIN PASSWORD 'etl';
+   END IF;
+END
+$$;
+-- Grant connection and usage on the database
+GRANT CONNECT ON DATABASE dw TO etl;
+
+-- Grant privileges on schema public
+
+\connect dw
+GRANT USAGE ON SCHEMA public TO etl;
+
+-- Grant privileges on all tables in public schema
+GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO etl;
+
+-- Ensure future tables grant access too
+ALTER DEFAULT PRIVILEGES IN SCHEMA public
+  GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO etl;
+
+-- Grant usage on sequences (for serial IDs, etc.)
+GRANT USAGE ON ALL SEQUENCES IN SCHEMA public TO etl;
+
+ALTER DEFAULT PRIVILEGES IN SCHEMA public
+  GRANT USAGE ON SEQUENCES TO etl;
+
+
+
 -- DIMENSIONS --------------------------------------------
 
 CREATE TABLE IF NOT EXISTS dim_item (
