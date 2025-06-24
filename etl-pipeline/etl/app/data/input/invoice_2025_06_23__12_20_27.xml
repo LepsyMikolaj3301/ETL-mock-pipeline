@@ -1,0 +1,122 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Invoice>
+	<InvoiceID>INV-2025-06-23;12:20:27-14</InvoiceID>
+	<InvoiceDate>2025-06-23;12:20:27</InvoiceDate>
+	<VendorName>Acme Corp</VendorName>
+	<VendorVAT>123-456-7890</VendorVAT>
+	<VendorEORI>EORI123456</VendorEORI>
+	<VendorREGON>REGON987654</VendorREGON>
+	<VendorAddress>Main St 123 Springfield USA</VendorAddress>
+	<Buyer>
+		<BuyerName>Batóg-Wojniak Sp.j.</BuyerName>
+		<BuyerVAT>9257087429</BuyerVAT>
+		<BuyerEORI>PL307171427005</BuyerEORI>
+		<BuyerREGON>874154692</BuyerREGON>
+		<Address>aleja Magnoliowa 12/46, 22-114 Płońsk, Yemen</Address>
+	</Buyer>
+	<Items>
+		<Item>
+			<ItemNameBrandSize>Power Runner FX129;Balenciaga;44</ItemNameBrandSize>
+			<ItemBarcode>0947836581498</ItemBarcode>
+			<ItemMetaQuantity>Szt.</ItemMetaQuantity>
+			<ItemQuantity>3</ItemQuantity>
+			<PriceIndNet>200.96</PriceIndNet>
+			<ValueNet>602.88</ValueNet>
+			<PriceIndGross>260.99</PriceIndGross>
+			<ValueGross>782.97</ValueGross>
+			<ItemVAT>23%</ItemVAT>
+			<Currency>EUR</Currency>
+		</Item>
+		<Item>
+			<ItemNameBrandSize>Pro Track HD135;ASICS;44</ItemNameBrandSize>
+			<ItemBarcode>1997956391889</ItemBarcode>
+			<ItemMetaQuantity>Szt.</ItemMetaQuantity>
+			<ItemQuantity>1</ItemQuantity>
+			<PriceIndNet>166.31</PriceIndNet>
+			<ValueNet>166.31</ValueNet>
+			<PriceIndGross>215.99</PriceIndGross>
+			<ValueGross>215.99</ValueGross>
+			<ItemVAT>23%</ItemVAT>
+			<Currency>EUR</Currency>
+		</Item>
+		<Item>
+			<ItemNameBrandSize>Speed Blast TX132;Skechers;36</ItemNameBrandSize>
+			<ItemBarcode>9288006700280</ItemBarcode>
+			<ItemMetaQuantity>Szt.</ItemMetaQuantity>
+			<ItemQuantity>4</ItemQuantity>
+			<PriceIndNet>262.56</PriceIndNet>
+			<ValueNet>1050.24</ValueNet>
+			<PriceIndGross>340.99</PriceIndGross>
+			<ValueGross>1363.96</ValueGross>
+			<ItemVAT>23%</ItemVAT>
+			<Currency>EUR</Currency>
+		</Item>
+		<Item>
+			<ItemNameBrandSize>Speed Blast TX132;Skechers;45</ItemNameBrandSize>
+			<ItemBarcode>1036028533649</ItemBarcode>
+			<ItemMetaQuantity>Szt.</ItemMetaQuantity>
+			<ItemQuantity>9</ItemQuantity>
+			<PriceIndNet>262.56</PriceIndNet>
+			<ValueNet>2363.04</ValueNet>
+			<PriceIndGross>340.99</PriceIndGross>
+			<ValueGross>3068.91</ValueGross>
+			<ItemVAT>23%</ItemVAT>
+			<Currency>EUR</Currency>
+		</Item>
+		<Item>
+			<ItemNameBrandSize>Elite Ride TX157;Salomon;36</ItemNameBrandSize>
+			<ItemBarcode>0917259582341</ItemBarcode>
+			<ItemMetaQuantity>Szt.</ItemMetaQuantity>
+			<ItemQuantity>1</ItemQuantity>
+			<PriceIndNet>219.44</PriceIndNet>
+			<ValueNet>219.44</ValueNet>
+			<PriceIndGross>284.99</PriceIndGross>
+			<ValueGross>284.99</ValueGross>
+			<ItemVAT>23%</ItemVAT>
+			<Currency>EUR</Currency>
+		</Item>
+		<Item>
+			<ItemNameBrandSize>Fusion Force X177;Skechers;46</ItemNameBrandSize>
+			<ItemBarcode>2624617295314</ItemBarcode>
+			<ItemMetaQuantity>Szt.</ItemMetaQuantity>
+			<ItemQuantity>1</ItemQuantity>
+			<PriceIndNet>297.21</PriceIndNet>
+			<ValueNet>297.21</ValueNet>
+			<PriceIndGross>385.99</PriceIndGross>
+			<ValueGross>385.99</ValueGross>
+			<ItemVAT>23%</ItemVAT>
+			<Currency>EUR</Currency>
+		</Item>
+		<Item>
+			<ItemNameBrandSize>Core Trail LT153;Merrell;46</ItemNameBrandSize>
+			<ItemBarcode>6772486760177</ItemBarcode>
+			<ItemMetaQuantity>Szt.</ItemMetaQuantity>
+			<ItemQuantity>4</ItemQuantity>
+			<PriceIndNet>200.19</PriceIndNet>
+			<ValueNet>800.76</ValueNet>
+			<PriceIndGross>259.99</PriceIndGross>
+			<ValueGross>1039.96</ValueGross>
+			<ItemVAT>23%</ItemVAT>
+			<Currency>EUR</Currency>
+		</Item>
+		<Item>
+			<ItemNameBrandSize>Core Blaze LT182;Nike;45</ItemNameBrandSize>
+			<ItemBarcode>8165338428673</ItemBarcode>
+			<ItemMetaQuantity>Szt.</ItemMetaQuantity>
+			<ItemQuantity>4</ItemQuantity>
+			<PriceIndNet>194.03</PriceIndNet>
+			<ValueNet>776.12</ValueNet>
+			<PriceIndGross>251.99</PriceIndGross>
+			<ValueGross>1007.96</ValueGross>
+			<ItemVAT>23%</ItemVAT>
+			<Currency>EUR</Currency>
+		</Item>
+	</Items>
+	<ValueSumNet>6276.0</ValueSumNet>
+	<ValueSumGross>8150.73</ValueSumGross>
+	<AdditionalNotes>Poprzez trwały zająć obecnie. Miód prostytutka wujek miesiąc waluta japoński.
+Wracać ból filmowy połączenie. Artysta skład pozbawić przestać bezpośrednio policjant.
+Uczyć Się tydzień pomagać doświadczenie oczekiwać lustro. Nauka wycieczka głównie warstwa kupić.
+Słoń okrągły przeszkoda czoło.</AdditionalNotes>
+	<Currency>{'EUR'}</Currency>
+</Invoice>

@@ -1,0 +1,64 @@
+version: '3.8'
+
+services:
+    spark-master:
+        image: bitnami/spark:latest
+        container_name: spark-master
+        environment:
+            - SPARK_MODE=master
+            - SPARK_RPC_AUTHENTICATION_ENABLED=no
+            - SPARK_RPC_ENCRYPTION_ENABLED=no
+            - SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED=no
+            - SPARK_SSL_ENABLED=no
+        ports:
+            - "8080:8080"
+            - "7077:7077"
+        volumes:
+            - ./app:/opt/spark-apps
+        command: /opt/bitnami/scripts/spark/entrypoint.sh /run.sh
+
+    spark-worker:
+        image: bitnami/spark:latest
+        depends_on:
+            - spark-master
+        environment:
+            - SPARK_MODE=worker
+            - SPARK_MASTER_URL=spark://spark-master:7077
+        ports:
+            - "8081:8081"  # Spark Worker Web UI
+        deploy:
+            replicas: 2  # Optional: Number of workers
+
+    spark-client:
+        image: bitnami/spark:latest
+        depends_on:
+            - spark-master
+        entrypoint: ["sleep", "infinity"]
+        volumes:
+            - ./app:/app
+    spark-submit:
+        image: bitnami/spark:latest
+        container_name: spark-submit
+        depends_on:
+            - spark-master
+            - spark-worker
+        volumes:
+            - ./app:/opt/spark-apps
+        entrypoint: ["/opt/bitnami/spark/bin/spark-submit", "--master", "spark://spark:7077", "/opt/spark-apps/your_script.py"]
+
+# DATA WAREHOUSE
+    postgres_dw:
+        image: postgres:16
+        container_name: postgres_dw
+        environment:
+            POSTGRES_USER: dw_user
+            POSTGRES_PASSWORD: dw_pass
+            POSTGRES_DB: dw
+        ports:
+        - "5442:5432"
+        volumes:
+        - pg_dw_data:/var/lib/postgresql/data
+        - .docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql  # Optional: run init scripts
+
+volumes:
+  pg_dw_data:

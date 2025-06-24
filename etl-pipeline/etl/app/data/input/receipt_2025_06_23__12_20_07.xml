@@ -1,0 +1,32 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Receipt>
+	<ReceiptID>GR-2025-06-23;12:20:07-54</ReceiptID>
+	<ReceiptBarcode>72219263</ReceiptBarcode>
+	<ReceiptDate>2025-06-23;12:20:07</ReceiptDate>
+	<VendorVAT>123-456-7890</VendorVAT>
+	<VendorName>Acme Corp</VendorName>
+	<VendorAddress>Main St 123 Springfield USA</VendorAddress>
+	<Items>
+		<Item>
+			<item_name_brand_size>Fusion Stride FX155|Merrell|37</item_name_brand_size>
+			<item_barcode>2179794480256</item_barcode>
+			<item_quantity>1</item_quantity>
+			<price_ind>309.99</price_ind>
+			<total_value>309.99</total_value>
+			<item_vat>0.23</item_vat>
+			<currency>EUR</currency>
+		</Item>
+		<Item>
+			<item_name_brand_size>Swift Grip M193|ASICS|36</item_name_brand_size>
+			<item_barcode>6216259893599</item_barcode>
+			<item_quantity>4</item_quantity>
+			<price_ind>283.99</price_ind>
+			<total_value>1135.96</total_value>
+			<item_vat>0.23</item_vat>
+			<currency>EUR</currency>
+		</Item>
+	</Items>
+	<ValueSum>1445.95</ValueSum>
+	<Currency>{'EUR'}</Currency>
+	<CashRegisterID>CASHREG55be9257-fc0d-45ee-b1e3-70d1fc88fb38</CashRegisterID>
+</Receipt>
