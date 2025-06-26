@@ -26,5 +26,13 @@
             "db_username": "etl",
             "db_password": "etl",
             "db_database": "shoe_storage"
-        }}]
+        }}],
+
+    "dw_conn_info": {
+        "host": "postgres_dw",
+        "port": 5442,
+        "db_name": "dw",
+        "user": "dw_user",
+        "password": "dw_pass"
+    }
 }

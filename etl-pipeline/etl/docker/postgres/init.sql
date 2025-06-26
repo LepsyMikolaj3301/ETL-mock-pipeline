@@ -56,10 +56,6 @@ CREATE TABLE IF NOT EXISTS dim_buyer (
   buyer_address TEXT
 );
 
-CREATE TABLE IF NOT EXISTS dim_currency (
-  currency_code TEXT PRIMARY KEY,
-  description TEXT
-);
 
 -- FACT TABLES --------------------------------------------
 
@@ -69,7 +65,7 @@ CREATE TABLE IF NOT EXISTS fact_receipt (
   receipt_date DATE,
   vendor_id INT REFERENCES dim_vendor(vendor_id),
   value_sum NUMERIC,
-  currency_code TEXT REFERENCES dim_currency(currency_code),
+  currency_code TEXT,
   cash_reg_id TEXT
 );
 
@@ -91,7 +87,7 @@ CREATE TABLE IF NOT EXISTS fact_invoice (
   value_sum_net NUMERIC,
   value_sum_gross NUMERIC,
   addit_notes TEXT,
-  currency_code TEXT REFERENCES dim_currency(currency_code)
+  currency TEXT
 );
 
 CREATE TABLE IF NOT EXISTS fact_invoice_item (

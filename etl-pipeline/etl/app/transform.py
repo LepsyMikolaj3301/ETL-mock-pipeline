@@ -284,5 +284,138 @@ def transform():
     df_invoice = invoice_parser.get_df() 
     df_receipt = receipt_parser.get_df()
     
-    return {"invoice": df_invoice,
-            "receipt": df_receipt}
+    
+    # DIMENSION TABLES
+
+    # dim_item
+    df_item = (
+        df_invoice.selectExpr("explode(items) as item")
+        .select(
+            col("item.item_name_brand_size").alias("item_name_brand_size"),
+            col("item.item_barcode").alias("item_barcode"),
+        )
+        .unionByName(
+            df_receipt.selectExpr("explode(items) as item")
+            .select(
+                col("item.item_name_brand_size").alias("item_name_brand_size"),
+                col("item.item_barcode").alias("item_barcode"),
+            )
+        )
+        .dropDuplicates(["item_barcode"])
+    )
+
+    # dim_vendor
+    df_vendor = (
+        df_invoice.select(
+            col("vendor_name"),
+            col("vendor_vat"),
+            col("vendor_eori"),
+            col("vendor_regon"),
+            col("vendor_address"),
+        )
+        .unionByName(
+            df_receipt.select(
+                col("vendor_name"),
+                col("vendor_vat"),
+                col("vendor_address"),
+            ).withColumn("vendor_eori", col("vendor_vat") * 0)  # dummy nulls
+             .withColumn("vendor_regon", col("vendor_vat") * 0)
+        )
+        .dropDuplicates(["vendor_vat", "vendor_name"])
+    )
+
+    # dim_buyer
+    df_buyer = (
+        df_invoice.select(
+            col("buyer.buyer_name").alias("buyer_name"),
+            col("buyer.buyer_vat").alias("buyer_vat"),
+            col("buyer.buyer_eori").alias("buyer_eori"),
+            col("buyer.buyer_regon").alias("buyer_regon"),
+            col("buyer.address").alias("buyer_address"),
+        )
+        .dropDuplicates(["buyer_vat", "buyer_name"])
+    )
+
+
+
+    # FACT TABLES
+
+    # fact_receipt
+    df_fact_receipt = (
+        df_receipt
+        .join(df_vendor, ["vendor_name", "vendor_vat", "vendor_address"], "left")
+        .select(
+            col("receipt_id"),
+            col("receipt_barcode"),
+            col("receipt_date"),
+            col("vendor_id"),
+            col("value_sum"),
+            col("currency"),
+            col("cash_reg_id"),
+        )
+    )
+
+    # fact_receipt_item
+    df_receipt_items = (
+        df_receipt
+        .select(
+            col("receipt_id"),
+            explode(col("items")).alias("item")
+        )
+        .join(df_item, col("item.item_barcode") == df_item.item_barcode, "left")
+        .select(
+            col("receipt_id"),
+            col("item_id"),
+            col("item.item_quantity").alias("item_quantity"),
+            col("item.price_ind").alias("price_ind"),
+            col("item.total_value").alias("total_value"),
+            col("item.item_vat").alias("item_vat"),
+        )
+    )
+
+    # fact_invoice
+    df_fact_invoice = (
+        df_invoice
+        .join(df_vendor, ["vendor_name", "vendor_vat", "vendor_address"], "left")
+        .join(df_buyer, [df_invoice.buyer.buyer_name == df_buyer.buyer_name,
+                         df_invoice.buyer.buyer_vat == df_buyer.buyer_vat], "left")
+        .select(
+            col("invoice_id"),
+            col("invoice_date"),
+            col("vendor_id"),
+            col("buyer_id"),
+            col("value_sum_net"),
+            col("value_sum_gross"),
+            col("addit_notes"),
+            col("currency"),
+        )
+    )
+
+    # fact_invoice_item
+    df_invoice_items = (
+        df_invoice
+        .select(
+            col("invoice_id"),
+            explode(col("items")).alias("item")
+        )
+        .join(df_item, col("item.item_barcode") == df_item.item_barcode, "left")
+        .select(
+            col("invoice_id"),
+            col("item_id"),
+            col("item.item_meta_quantity").alias("item_meta_quantity"),
+            col("item.item_quantity").alias("item_quantity"),
+            col("item.price_ind_net").alias("price_ind_net"),
+            col("item.value_net").alias("value_net"),
+            col("item.price_ind_gross").alias("price_ind_gross"),
+            col("item.value_gross").alias("value_gross"),
+            col("item.item_vat").alias("item_vat"),
+        )
+    )
+    
+    
+    
+    
+    
+    return {"dimensions": [df_buyer, df_vendor, df_item],
+            "invoice": [df_fact_invoice, df_invoice_items],
+            "receipt": [df_fact_receipt, df_receipt_items]}

@@ -16,6 +16,10 @@ default_args = {
     'retry_delay': timedelta(minutes=5),
 }
 
+with open('init/setup.json', 'r') as f:
+    CONFIG = json.load(f)
+        
+
 with DAG(
     dag_id='etl_pipeline',
     default_args=default_args,
@@ -28,11 +32,9 @@ with DAG(
     @task
     def extract(**context):
     # Placeholder for extraction logic
-        with open('init/setup.json', 'r') as f:
-            config = json.load(f)
         
         try:
-            extract_files_url(config['sim_conn_info'])
+            extract_files_url(CONFIG['sim_conn_info'])
         except RuntimeError as e:
             # FIX
             dag.task_instance.xcom_push(key='extract_failed', value=str(e)) #type: ignore
@@ -43,11 +45,19 @@ with DAG(
         return transform_to_df()
 
     @task
-    def load(dfs: dict, **context):
-        insert_to_postgres_spark(*dfs)
+    def load(dfs: dict, conn_info, **context):
+        insert_to_postgres_spark(dfs["dimensions"][2], 
+                                 dfs['dimensions'][1],
+                                 dfs['dimensions'][0],
+                                 dfs['receipt'][0],
+                                 dfs['receipt'][1],
+                                 dfs['invoice'][0],
+                                 dfs['invoice'][1],
+                                 pg_conn_params=CONFIG['dw_conn_info']
+                                 )
         
     extract_task = extract()
     transform_task = transform()
     # FIX
-    load_task = load(transform_task)
+    load_task = load(transform_task, )
     extract_task >> transform_task >> load_task
